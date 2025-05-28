@@ -17,7 +17,7 @@ function Register() {
         return regex.test(email);
     };
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         if (!email || !password || !confirmPassword) {
             alert("Por favor, preencha todos os campos.");
             return;
@@ -38,8 +38,29 @@ function Register() {
             return;
         }
 
-        // Cadastro simulado com sucesso
-        alert("Cadastro realizado com sucesso!");
+        try {
+            const response = await fetch("http://localhost:3001/api/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    senha: password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.error || "Erro ao cadastrar usuário.");
+            } else {
+                alert("Cadastro realizado com sucesso!");
+                // Exemplo: redirecionar para login se quiser
+                // navigate('/login');
+            }
+        } catch (error) {
+            console.error("Erro ao se cadastrar:", error);
+            alert("Erro ao conectar com o servidor.");
+        }
     };
 
     return (
