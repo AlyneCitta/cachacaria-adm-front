@@ -14,13 +14,13 @@ import {
   Breadcrumb
 } from './styles';
 
-const ClientesForm = () => {
+const FornecedoresForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     nome: '',
-    datanasc: '',
+    cnpj: '',
     email: '',
     telefone: '',
     cep: '',
@@ -39,23 +39,24 @@ const ClientesForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Cliente salvo:\n${JSON.stringify(formData, null, 2)}`);
-    navigate('/clienteslist');
+    alert(`Fornecedor salvo:\n${JSON.stringify(formData, null, 2)}`);
+    navigate('/fornecedoreslist');
   };
 
   const handleBack = () => {
-    navigate('/clienteslist');
+    navigate('/fornecedoreslist');
   };
 
   const goToHome = () => {
     navigate('/home');
   };
 
-  const goToClientes = () => {
-    navigate('/clienteslist');
+  const goToFornecedores = () => {
+    navigate('/fornecedoreslist');
   };
-    const goToClientesForm = () => {
-    navigate('/clientesform');
+
+  const goToFornecedoresForm = () => {
+    navigate('/fornecedoresform');
   };
 
   return (
@@ -64,8 +65,8 @@ const ClientesForm = () => {
 
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={goToHome}>Home</span> &gt; <span onClick={goToClientes}>Clientes</span>
-          &gt; <span onClick={goToClientesForm}>Formulário</span>
+          <span onClick={goToHome}>Home</span> &gt; <span onClick={goToFornecedores}>Fornecedores</span>
+          &gt; <span onClick={goToFornecedoresForm}>Formulário</span>
         </Breadcrumb>
       </BreadcrumbWrapper>
 
@@ -74,8 +75,8 @@ const ClientesForm = () => {
           <Label>Nome</Label>
           <Input name="nome" value={formData.nome} onChange={handleChange} required />
 
-          <Label>Data Nasc.</Label>
-          <Input type="date" name="datanasc" value={formData.datanasc} onChange={handleChange} required />
+          <Label>CNPJ</Label>
+          <Input name="cnpj" value={formData.cnpj} onChange={handleChange} required />
 
           <Label>Email</Label>
           <Input type="email" name="email" value={formData.email} onChange={handleChange} required />
@@ -117,4 +118,4 @@ const ClientesForm = () => {
   );
 };
 
-export default ClientesForm;
+export default FornecedoresForm;

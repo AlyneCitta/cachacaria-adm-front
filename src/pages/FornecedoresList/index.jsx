@@ -24,55 +24,50 @@ import {
   TopActions
 } from './styles';
 
-const ClientesList = () => {
+const FornecedoresList = () => {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
-  const [clientes] = useState([
+  const [fornecedores] = useState([
     {
       id: 1,
-      nome: 'João Silva',
-      datanasc: '1990-01-01',
-      email: 'joao@email.com',
-      telefone: '(11) 99999-9999',
+      nome: 'Distribuidora Sol',
+      cnpj: '12.345.678/0001-90',
+      email: 'contato@sol.com',
+      telefone: '(48) 99999-9999',
       cidade: 'Florianópolis'
     },
     {
       id: 2,
-      nome: 'Maria Souza',
-      datanasc: '1985-05-12',
-      email: 'maria@email.com',
+      nome: 'Alimentos Brasil',
+      cnpj: '98.765.432/0001-10',
+      email: 'vendas@brasil.com',
       telefone: '(11) 98888-8888',
       cidade: 'São Paulo'
     }
   ]);
 
-  const filteredClientes = clientes.filter((cliente) =>
-    cliente.nome.toLowerCase().includes(search.toLowerCase())
+  const filteredFornecedores = fornecedores.filter((fornecedor) =>
+    fornecedor.nome.toLowerCase().includes(search.toLowerCase())
   );
 
-  const formatDate = (dateStr) => {
-    const [year, month, day] = dateStr.split('-');
-    return `${day}/${month}/${year}`;
-  };
-
   const handleEdit = (id) => {
-    navigate(`/clientes/form/${id}`);
+    navigate(`/fornecedores/form/${id}`);
   };
 
   const handleDelete = (id) => {
-    const confirmar = window.confirm('Tem certeza que deseja excluir este cliente?');
+    const confirmar = window.confirm('Tem certeza que deseja excluir este fornecedor?');
     if (confirmar) {
-      alert(`Cliente ${id} excluído`);
+      alert(`Fornecedor ${id} excluído`);
     }
   };
 
   const handleView = (id) => {
-    navigate(`/clientes/view/${id}`);
+    navigate(`/fornecedores/view/${id}`);
   };
 
   const handleNew = () => {
-    navigate('/clientesform');
+    navigate('/fornecedoresform');
   };
 
   const handleBack = () => {
@@ -83,27 +78,25 @@ const ClientesList = () => {
     navigate('/home');
   };
 
-  const goToClientes = () => {
-    navigate('/clienteslist');
+  const goToFornecedores = () => {
+    navigate('/fornecedoreslist');
   };
 
   return (
     <>
       <Header />
-    <BreadcrumbWrapper>
+      <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={goToHome}>Home</span> &gt; <span onClick={goToClientes}>Clientes</span>
+          <span onClick={goToHome}>Home</span> &gt; <span onClick={goToFornecedores}>Fornecedores</span>
         </Breadcrumb>
-       </BreadcrumbWrapper>
+      </BreadcrumbWrapper>
       <PageWrapper>
         <PageContainer>
-
-
-          <Title>Lista de Clientes</Title>
+          <Title>Lista de Fornecedores</Title>
 
           <TopActions>
             <BackButton onClick={handleBack}>Voltar</BackButton>
-            <NewButton onClick={handleNew}>Novo Cliente</NewButton>
+            <NewButton onClick={handleNew}>Novo Fornecedor</NewButton>
           </TopActions>
 
           <SearchInput
@@ -117,7 +110,7 @@ const ClientesList = () => {
             <Thead>
               <Tr>
                 <Th>Nome</Th>
-                <Th>Data Nasc.</Th>
+                <Th>CNPJ</Th>
                 <Th>Email</Th>
                 <Th>Telefone</Th>
                 <Th>Cidade</Th>
@@ -125,18 +118,18 @@ const ClientesList = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {filteredClientes.map((cliente) => (
-                <Tr key={cliente.id}>
-                  <Td>{cliente.nome}</Td>
-                  <Td>{formatDate(cliente.datanasc)}</Td>
-                  <Td>{cliente.email}</Td>
-                  <Td>{cliente.telefone}</Td>
-                  <Td>{cliente.cidade}</Td>
+              {filteredFornecedores.map((fornecedor) => (
+                <Tr key={fornecedor.id}>
+                  <Td>{fornecedor.nome}</Td>
+                  <Td>{fornecedor.cnpj}</Td>
+                  <Td>{fornecedor.email}</Td>
+                  <Td>{fornecedor.telefone}</Td>
+                  <Td>{fornecedor.cidade}</Td>
                   <Td>
                     <Actions>
-                      <ViewButton onClick={() => handleView(cliente.id)}>Visualizar</ViewButton>
-                      <EditButton onClick={() => handleEdit(cliente.id)}>Editar</EditButton>
-                      <DeleteButton onClick={() => handleDelete(cliente.id)}>Excluir</DeleteButton>
+                      <ViewButton onClick={() => handleView(fornecedor.id)}>Visualizar</ViewButton>
+                      <EditButton onClick={() => handleEdit(fornecedor.id)}>Editar</EditButton>
+                      <DeleteButton onClick={() => handleDelete(fornecedor.id)}>Excluir</DeleteButton>
                     </Actions>
                   </Td>
                 </Tr>
@@ -150,4 +143,4 @@ const ClientesList = () => {
   );
 };
 
-export default ClientesList;
+export default FornecedoresList;

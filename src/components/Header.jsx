@@ -76,11 +76,11 @@ const Header = () => {
     { label: 'Compras', href: '/compra' },
     { label: 'Vendas', href: '/vendas' },
     { label: 'Clientes', href: '/clientesList' },
-    { label: 'Fornecedores', href: '/fornecedores' },
+    { label: 'Fornecedores', href: '/fornecedoreslist' },
     { label: 'Ingredientes', href: '/ingredientes' },
     { label: 'Utensílios', href: '/utensilios' },
     { label: 'Bebidas', href: '/bebidas' },
-    { label: 'Maquinário', href: '/maquinario' },
+    { label: 'Maquinário', href: '/maquinariolist' },
     { label: 'Relatórios', href: '/relatorio' },
   ];
 

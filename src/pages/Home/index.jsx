@@ -24,11 +24,11 @@ const items = [
   { label: 'Compras', icon: comprasIcon, route: '/compras' },
   { label: 'Vendas', icon: vendasIcon, route: '/vendas' },
   { label: 'Clientes', icon: clientesIcon, route: '/clienteslist' },
-  { label: 'Fornecedores', icon: fornecedoresIcon, route: '/fornecedores' },
+  { label: 'Fornecedores', icon: fornecedoresIcon, route: '/fornecedoreslist' },
   { label: 'Ingredientes', icon: ingredientesIcon, route: '/ingredientes' },
   { label: 'Utensílios', icon: utensiliosIcon, route: '/utensilios' },
   { label: 'Bebidas', icon: bebidasIcon, route: '/bebidas' },
-  { label: 'Maquinário', icon: maquinarioIcon, route: '/maquinario' },
+  { label: 'Maquinário', icon: maquinarioIcon, route: '/maquinariolist' },
   { label: 'Relatórios', icon: relatorioIcon, route: '/relatorios' },
 ];
 
