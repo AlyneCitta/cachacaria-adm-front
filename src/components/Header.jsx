@@ -75,7 +75,7 @@ const Header = () => {
     { label: 'Estoque', href: '/estoque' },
     { label: 'Compras', href: '/compra' },
     { label: 'Vendas', href: '/vendas' },
-    { label: 'Clientes', href: '/clientes' },
+    { label: 'Clientes', href: '/clientesList' },
     { label: 'Fornecedores', href: '/fornecedores' },
     { label: 'Ingredientes', href: '/ingredientes' },
     { label: 'Utensílios', href: '/utensilios' },

@@ -2,6 +2,9 @@ import React from 'react';
 import { HomeContainer, WelcomeText, Grid, Card } from './styles';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import { useNavigate } from 'react-router-dom';
+
+// Ícones
 import saboresIcon from '../../assets/saboresIcon.png';
 import estoqueIcon from '../../assets/estoqueIcon.png';
 import comprasIcon from '../../assets/comprasIcon.png';
@@ -14,22 +17,24 @@ import bebidasIcon from '../../assets/bebidasIcon.png';
 import maquinarioIcon from '../../assets/maquinarioIcon.png';
 import relatorioIcon from '../../assets/relatorioIcon.png';
 
+// Itens com rotas associadas
 const items = [
-    { label: 'Sabores', icon: saboresIcon },
-    { label: 'Estoque', icon: estoqueIcon },
-    { label: 'Compras', icon: comprasIcon },
-    { label: 'Vendas', icon: vendasIcon },
-    { label: 'Clientes', icon: clientesIcon },
-    { label: 'Fornecedores', icon: fornecedoresIcon },
-    { label: 'Ingredientes', icon: ingredientesIcon },
-    { label: 'Utensílios', icon: utensiliosIcon },
-    { label: 'Bebidas', icon: bebidasIcon },
-    { label: 'Maquinário', icon: maquinarioIcon },
-    { label: 'Relatórios', icon: relatorioIcon },
-    
-  ];
+  { label: 'Sabores', icon: saboresIcon, route: '/sabores' },
+  { label: 'Estoque', icon: estoqueIcon, route: '/estoque' },
+  { label: 'Compras', icon: comprasIcon, route: '/compras' },
+  { label: 'Vendas', icon: vendasIcon, route: '/vendas' },
+  { label: 'Clientes', icon: clientesIcon, route: '/clienteslist' },
+  { label: 'Fornecedores', icon: fornecedoresIcon, route: '/fornecedores' },
+  { label: 'Ingredientes', icon: ingredientesIcon, route: '/ingredientes' },
+  { label: 'Utensílios', icon: utensiliosIcon, route: '/utensilios' },
+  { label: 'Bebidas', icon: bebidasIcon, route: '/bebidas' },
+  { label: 'Maquinário', icon: maquinarioIcon, route: '/maquinario' },
+  { label: 'Relatórios', icon: relatorioIcon, route: '/relatorios' },
+];
 
 const Home = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Header />
@@ -38,13 +43,13 @@ const Home = () => {
         <p>À Cachaçaria Antônio Carlos</p>
 
         <Grid>
-             {items.map((item, index) => (
-                 <Card key={index}>
-                   <img src={item.icon} alt={item.label} />
-                   <span>{item.label}</span>
-                 </Card>
-         ))}
-         {items.length % 3 !== 0 && <Card style={{ visibility: 'hidden' }} />}
+          {items.map((item, index) => (
+            <Card key={index} onClick={() => navigate(item.route)} style={{ cursor: 'pointer' }}>
+              <img src={item.icon} alt={item.label} />
+              <span>{item.label}</span>
+            </Card>
+          ))}
+          {items.length % 3 !== 0 && <Card style={{ visibility: 'hidden' }} />}
         </Grid>
       </HomeContainer>
       <Footer />
