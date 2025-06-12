@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "../auth/AuthContext";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Home from "../pages/Home";
@@ -14,6 +15,7 @@ import MaquinarioForm from "../pages/MaquinarioForm";
 
 const AppRoutes = () => {
   return (
+    <AuthProvider>
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -27,6 +29,7 @@ const AppRoutes = () => {
         <Route path="/maquinarioform" element={<MaquinarioForm />} />
         <Route path="/maquinariolist" element={<MaquinarioList />} />
       </Routes>
+    </AuthProvider>
   );
 };
 

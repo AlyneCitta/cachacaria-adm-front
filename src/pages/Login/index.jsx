@@ -1,14 +1,18 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from "./styles.js";
 import EyeOpen from '../../assets/EyeOpen.png';
 import EyeClose from '../../assets/EyeClose.png';
 import GlobalStyle from "../../globalStyle/style.js";
 import { Link } from "react-router-dom";
+import { useAuth } from '../../auth/AuthContext.jsx';
 
 function Login() {
     const [isShow, setIsShow] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { login } = useAuth();
+    const navigate = useNavigate();  // Cria o navigate
 
     const handlePassword = () => setIsShow(!isShow);
 
@@ -17,7 +21,7 @@ function Login() {
         return regex.test(email);
     };
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (!email || !password) {
             alert("Por favor, preencha todos os campos.");
             return;
@@ -28,8 +32,14 @@ function Login() {
             return;
         }
 
-        // Simulação de erro de login (email e senha "incorretos")
-        alert("Email ou senha incorretos.");
+        try {
+            // Se o seu login retorna uma Promise, aguarde aqui
+            await login({ email, password });
+            // Após login com sucesso, redirecione para home
+            navigate('/home');
+        } catch (error) {
+            alert("Erro ao fazer login. Verifique suas credenciais.");
+        }
     };
 
     return (

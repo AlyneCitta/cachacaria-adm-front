@@ -39,7 +39,7 @@ const Home = () => {
     <>
       <Header />
       <HomeContainer>
-        <WelcomeText>Bem-vindo(a), Guilherme</WelcomeText>
+        <WelcomeText>Bem-vindo(a)</WelcomeText>
         <p>À Cachaçaria Antônio Carlos</p>
 
         <Grid>

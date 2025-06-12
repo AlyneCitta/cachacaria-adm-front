@@ -1,10 +1,10 @@
-// src/components/Header.jsx
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import logo from '../assets/logo.png';
-import profileIcon from '../assets/profileIcon.png'; // <- nova imagem
+import profileIcon from '../assets/profileIcon.png';
 import { FaBars } from 'react-icons/fa';
 import SidebarMenu from './SidebarMenu';
+import { useAuth } from '../auth/AuthContext';  // Importa o contexto de auth
 
 const HeaderContainer = styled.header`
   background-color: #aeb6bd;
@@ -26,7 +26,7 @@ const MenuIcon = styled.div`
   transform: translateY(-50%);
   font-size: 40px;
   cursor: pointer;
-  color: white; /* Altera a cor do ícone para branco */
+  color: white;
 `;
 
 const ProfileSection = styled.div`
@@ -69,6 +69,8 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef();
 
+  const { user, logout } = useAuth(); // Pega user e função logout do contexto
+
   const menuItems = [
     { label: 'Home', href: '/home' },
     { label: 'Sabores', href: '/sabores' },
@@ -91,13 +93,18 @@ const Header = () => {
           <FaBars />
         </MenuIcon>
         <Logo src={logo} alt="Logo Cachaçaria Antônio Carlos" />
-        <ProfileSection>
-          <ProfileText>
-            <Name>Guilherme</Name>
-            <ExitLink href="/">Sair →</ExitLink>
-          </ProfileText>
-          <ProfileImage src={profileIcon} alt="Ícone do perfil" />
-        </ProfileSection>
+
+        {user ? (  // Só mostra se tiver usuário logado
+          <ProfileSection>
+            <ProfileImage src={profileIcon} alt="Ícone do perfil" />
+            <ExitLink href="/" onClick={(e) => {
+              e.preventDefault();
+              logout();
+            }}>
+              Sair →
+            </ExitLink>
+          </ProfileSection>
+        ) : null}
       </HeaderContainer>
 
       <SidebarMenu
