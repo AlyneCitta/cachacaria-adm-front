@@ -12,6 +12,16 @@ import ManutencoesList from "../pages/ManutencoesList";
 import ManutencoesForm from "../pages/ManutencoesForm";
 import MaquinarioList from "../pages/MaquinarioList";
 import MaquinarioForm from "../pages/MaquinarioForm";
+import ProdutoList from  "../pages/Produto/ProdutoList";
+import ProdutoForm from  "../pages/Produto/ProdutoForm";
+import CompraList from  "../pages/Compra/CompraList";
+import CompraForm from  "../pages/Compra/ComprasForm";
+import VendaList from  "../pages/Venda/VendasList";
+import VendaForm from  "../pages/Venda/VendasForm";
+import OrdemProducaoList from  "../pages/OrdemProducao/OrdemProducaoList";
+import OrdemProducaoForm from  "../pages/OrdemProducao/OrdemProducaoForm";
+import EstoqueList from  "../pages/Estoque/EstoqueList";
+import ConsultaEstoqueProduto from  "../pages/Estoque/ConsultaEstoqueProduto";
 
 const AppRoutes = () => {
   return (
@@ -28,6 +38,16 @@ const AppRoutes = () => {
         <Route path="/manutencoeslist" element={<ManutencoesList />} />
         <Route path="/maquinarioform" element={<MaquinarioForm />} />
         <Route path="/maquinariolist" element={<MaquinarioList />} />
+        <Route path="/produtolist" element={<ProdutoList />} />
+        <Route path="/produtoform" element={<ProdutoForm />} />
+        <Route path="/compralist" element={<CompraList />} />
+        <Route path="/compraform" element={<CompraForm />} />
+        <Route path="/vendalist" element={<VendaList />} />        
+        <Route path="/vendaform" element={<VendaForm />} />
+        <Route path="/ordemproducaolist" element={<OrdemProducaoList />} />
+        <Route path="/ordemproducaof" element={<OrdemProducaoForm />} />
+        <Route path="/estoquelist" element={<EstoqueList />} />
+        <Route path="/consultaestoqueproduto" element={<ConsultaEstoqueProduto />} />
       </Routes>
     </AuthProvider>
   );
