@@ -1,75 +1,61 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import axios from 'axios';
 import {
   PageWrapper,
   PageContainer,
   Title,
-  BreadcrumbWrapper,
-  Breadcrumb,
-  SearchInput,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
+  BreadcrumbWrapper,
+  Breadcrumb,
   Actions,
   EditButton,
   DeleteButton,
-  ViewButton,
-  NewButton,
-  BackButton,
-  TopActions
+  TopActions,
+  NewButton
 } from './styles';
 
 const MaquinarioList = () => {
-  const [search, setSearch] = useState('');
   const navigate = useNavigate();
+  const [maquinarios, setMaquinarios] = useState([]);
 
-  const [maquinarios] = useState([
-    {
-      id: 1,
-      nome: 'Alambique de cobre',
-      ultima: '2024-01-10',
-      proxima: '2025-01-10'
-    },
-    {
-      id: 2,
-      nome: 'Engarrafadora automática',
-      ultima: '2023-11-15',
-      proxima: '2024-11-15'
+  useEffect(() => {
+    fetchMaquinarios();
+  }, []);
+
+  const fetchMaquinarios = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/api/maquinario');
+      setMaquinarios(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar maquinários:', error);
     }
-  ]);
+  };
 
-  const filtered = maquinarios.filter((m) =>
-    m.nome.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleDelete = async (id) => {
+    if (!window.confirm('Tem certeza que deseja excluir este maquinário?')) return;
+
+    try {
+      await axios.delete(`http://localhost:3001/api/maquinario/${id}`);
+      fetchMaquinarios();
+    } catch (error) {
+      console.error('Erro ao excluir maquinário:', error);
+    }
+  };
 
   const handleEdit = (id) => {
     navigate(`/maquinarioform/${id}`);
   };
 
-  const handleDelete = (id) => {
-    const confirmar = window.confirm('Deseja excluir este maquinário?');
-    if (confirmar) alert(`Maquinário ${id} excluído`);
-  };
-
-  const handleView = (id) => {
-    navigate(`/manutencoeslist/${id}`);
-  };
-
   const handleNew = () => {
-    navigate('/maquinarioform');
-  };
-
-  const goToHome = () => {
-    navigate('/home');
-  };
-
-  const goToList = () => {
-    navigate('/maquinariolist');
+    navigate('/maquinarioform');  // Aqui sem id para cadastro novo
   };
 
   return (
@@ -77,42 +63,36 @@ const MaquinarioList = () => {
       <Header />
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={goToHome}>Home</span> &gt; <span onClick={goToList}>Maquinários</span>
+          <span onClick={() => navigate('/home')}>Home</span> &gt; <span>Maquinários</span>
         </Breadcrumb>
       </BreadcrumbWrapper>
       <PageWrapper>
         <PageContainer>
-          <Title>Lista de Maquinários</Title>
+          <Title>Maquinários</Title>
+
           <TopActions>
-            <BackButton onClick={goToHome}>Voltar</BackButton>
             <NewButton onClick={handleNew}>Novo Maquinário</NewButton>
           </TopActions>
-          <SearchInput
-            type="text"
-            placeholder="Pesquisar por nome..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+
           <Table>
             <Thead>
               <Tr>
+                <Th>ID</Th>
                 <Th>Nome</Th>
-                <Th>Última Manutenção</Th>
-                <Th>Próxima Manutenção</Th>
+                <Th>Data de Aquisição</Th>
                 <Th>Ações</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {filtered.map((m) => (
-                <Tr key={m.id}>
-                  <Td>{m.nome}</Td>
-                  <Td>{m.ultima}</Td>
-                  <Td>{m.proxima}</Td>
+              {maquinarios.map((item) => (
+                <Tr key={item.id}>
+                  <Td>{item.id}</Td>
+                  <Td>{item.nome}</Td>
+                  <Td>{new Date(item.dataaquisicao).toLocaleDateString()}</Td>
                   <Td>
                     <Actions>
-                      <ViewButton onClick={() => handleView(m.id)}>Visualizar</ViewButton>
-                      <EditButton onClick={() => handleEdit(m.id)}>Editar</EditButton>
-                      <DeleteButton onClick={() => handleDelete(m.id)}>Excluir</DeleteButton>
+                      <EditButton onClick={() => handleEdit(item.id)}>Editar</EditButton>
+                      <DeleteButton onClick={() => handleDelete(item.id)}>Excluir</DeleteButton>
                     </Actions>
                   </Td>
                 </Tr>

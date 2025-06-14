@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -29,18 +29,81 @@ const ClientesForm = () => {
     complemento: '',
     bairro: '',
     cidade: '',
-    uf: ''
+    uf: '',
+    cliente: false,
+    cpfcnpj: '', // campo adicionado
   });
 
+  // Carregar cliente existente para edição
+  useEffect(() => {
+    if (id) {
+      const token = localStorage.getItem('token');
+      fetch(`http://localhost:3001/api/clientes/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Erro ao buscar cliente');
+          return res.json();
+        })
+        .then(data => {
+          setFormData({
+            nome: data.nome || '',
+            datanasc: data.datanasc ? data.datanasc.slice(0, 10) : '',
+            email: data.email || '',
+            telefone: data.telefone || '',
+            cep: data.cep || '',
+            logradouro: data.logradouro || '',
+            numero: data.numero || '',
+            complemento: data.complemento || '',
+            bairro: data.bairro || '',
+            cidade: data.cidade || '',
+            uf: data.uf || '',
+            cliente: data.cliente || false,
+            cpfcnpj: data.cpfcnpj || '', // carregando cpfcnpj
+          });
+        })
+        .catch(err => alert(err.message));
+    }
+  }, [id]);
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Cliente salvo:\n${JSON.stringify(formData, null, 2)}`);
-    navigate('/clienteslist');
+    const token = localStorage.getItem('token');
+    try {
+      const method = id ? 'PUT' : 'POST';
+      const url = id
+        ? `http://localhost:3001/api/clientes/${id}`
+        : 'http://localhost:3001/api/clientes';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao salvar cliente');
+      }
+
+      alert('Cliente salvo com sucesso!');
+      navigate('/clienteslist');
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+    }
   };
 
   const handleBack = () => {
@@ -54,7 +117,8 @@ const ClientesForm = () => {
   const goToClientes = () => {
     navigate('/clienteslist');
   };
-    const goToClientesForm = () => {
+
+  const goToClientesForm = () => {
     navigate('/clientesform');
   };
 
@@ -64,8 +128,9 @@ const ClientesForm = () => {
 
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={goToHome}>Home</span> &gt; <span onClick={goToClientes}>Clientes</span>
-          &gt; <span onClick={goToClientesForm}>Formulário</span>
+          <span onClick={goToHome}>Home</span> &gt;{' '}
+          <span onClick={goToClientes}>Clientes</span> &gt;{' '}
+          <span onClick={goToClientesForm}>Formulário</span>
         </Breadcrumb>
       </BreadcrumbWrapper>
 
@@ -104,10 +169,28 @@ const ClientesForm = () => {
           <Label>UF</Label>
           <Input name="uf" value={formData.uf} onChange={handleChange} required maxLength={2} />
 
+          <Label>CPF/CNPJ</Label>
+          <Input
+            name="cpfcnpj"
+            value={formData.cpfcnpj}
+            onChange={handleChange}
+            required
+            maxLength={14}
+          />
+
+          <Label>
+            <Input
+              type="checkbox"
+              name="cliente"
+              checked={formData.cliente}
+              onChange={handleChange}
+            />{' '}
+            Cliente
+          </Label>
+
           <ButtonGroup>
             <Button type="button" onClick={handleBack} className="secondary">Voltar</Button>
             <Button type="submit">Salvar</Button>
-            
           </ButtonGroup>
         </Form>
       </PageContainer>
