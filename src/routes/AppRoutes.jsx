@@ -60,10 +60,9 @@ const AppRoutes = () => {
         <Route path="/utensilios" element={<Utensilios />} />
         <Route path="/relatorio" element={<Relatorio />} />
         <Route path="/ingredientes" element={<Ingredientes />} />
-        
       </Routes>
     </AuthProvider>
   );
 };
 
-export default AppRoutes;
+export default AppRoutes;

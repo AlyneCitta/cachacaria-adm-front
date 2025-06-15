@@ -114,7 +114,7 @@ const Header = () => {
             </ExitLink>
           </ProfileSection>
         ) : (
-          <LoginButton onClick={() => navigate('/login')}>
+          <LoginButton onClick={() => navigate('/cadastro')}>
             Entrar
           </LoginButton>
         )}
