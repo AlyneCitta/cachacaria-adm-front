@@ -29,6 +29,7 @@ const MaquinarioList = () => {
   const [maquinarios, setMaquinarios] = useState([]);
 
   useEffect(() => {
+    window.scrollTo(0, 0); // <== Scroll para o topo ao montar a página
     fetchMaquinarios();
   }, []);
 
@@ -80,7 +81,6 @@ const MaquinarioList = () => {
           <Table>
             <Thead>
               <Tr>
-                <Th>ID</Th>
                 <Th>Nome</Th>
                 <Th>Data de Aquisição</Th>
                 <Th>Ações</Th>
@@ -89,13 +89,12 @@ const MaquinarioList = () => {
             <Tbody>
               {maquinarios.map((item) => (
                 <Tr key={item.id}>
-                  <Td>{item.id}</Td>
                   <Td>{item.nome}</Td>
                   <Td>{new Date(item.dataaquisicao).toLocaleDateString()}</Td>
                   <Td>
                     <Actions>
-                     <ViewButton onClick={() => navigate(`/manutencoeslist?maquinario=${item.id}`)}>Manutenções</ViewButton>
-                     <EditButton onClick={() => handleEdit(item.id)}>Editar</EditButton>
+                      <ViewButton onClick={() => navigate(`/manutencoeslist?maquinario=${item.id}`)}>Manutenções</ViewButton>
+                      <EditButton onClick={() => handleEdit(item.id)}>Editar</EditButton>
                       <DeleteButton onClick={() => handleDelete(item.id)}>Excluir</DeleteButton>
                     </Actions>
                   </Td>

@@ -22,6 +22,7 @@ const ManutencoesForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const maquinarioId = searchParams.get('maquinario');
+  const manutencaoId = searchParams.get('id');
 
   const [formData, setFormData] = useState({
     data: '',
@@ -39,14 +40,33 @@ const ManutencoesForm = () => {
   useEffect(() => {
     fetch('http://localhost:3001/api/tipos-manutencao')
       .then(res => res.json())
-      .then(data => setTiposManutencao(data))
-      .catch(err => console.error('Erro ao carregar tipos de manutenção:', err));
+      .then(setTiposManutencao)
+      .catch(console.error);
 
     fetch('http://localhost:3001/api/users')
       .then(res => res.json())
-      .then(data => setUsuarios(data))
-      .catch(err => console.error('Erro ao carregar usuários:', err));
+      .then(setUsuarios)
+      .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (manutencaoId) {
+      fetch(`http://localhost:3001/api/manutencoes/${manutencaoId}`)
+        .then(res => res.json())
+        .then(data => {
+          setFormData({
+            data: data.datamanutencao?.split('T')[0] || '',
+            tipo: String(data.idf_tipomanutencao),
+            descricao: data.descricao || '',
+            responsavel: String(data.idf_usuario),
+            custo: data.custo || '',
+            proxima: data.proximamanutencao?.split('T')[0] || '',
+            observacoes: data.obersvacao || ''
+          });
+        })
+        .catch(err => console.error('Erro ao carregar manutenção:', err));
+    }
+  }, [manutencaoId]);
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value});
@@ -68,22 +88,27 @@ const ManutencoesForm = () => {
       descricao: formData.descricao,
       custo: Number(formData.custo),
       proximamanutencao: formData.proxima,
-      obersvacao: formData.observacoes // mantendo o erro no nome como solicitado
+      obersvacao: formData.observacoes
     };
 
     try {
-      const response = await fetch('http://localhost:3001/api/manutencoes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToSend),
-      });
+      const response = await fetch(
+        manutencaoId
+          ? `http://localhost:3001/api/manutencoes/${manutencaoId}`
+          : 'http://localhost:3001/api/manutencoes',
+        {
+          method: manutencaoId ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataToSend),
+        }
+      );
 
       if (response.ok) {
-        alert('Manutenção registrada com sucesso!');
+        alert('Manutenção salva com sucesso!');
         navigate(`/manutencoeslist?maquinario=${maquinarioId}`);
       } else {
         const errorData = await response.json();
-        alert('Erro ao salvar manutenção: ' + (errorData.error || 'Erro desconhecido'));
+        alert('Erro ao salvar: ' + (errorData.error || 'Erro desconhecido'));
       }
     } catch (error) {
       console.error('Erro ao salvar manutenção:', error);
@@ -96,18 +121,21 @@ const ManutencoesForm = () => {
       <Header />
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Home</span> &gt; <span>Nova Manutenção</span>
+          <span onClick={() => navigate('/home')}>Home</span> &gt;
+          <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
+          <span onClick={() => navigate(`/manutencoeslist?maquinario=${maquinarioId}`)}> Manutenções</span> &gt;
+          <span>{manutencaoId ? 'Editar' : 'Nova'} Manutenção</span>
         </Breadcrumb>
       </BreadcrumbWrapper>
       <PageWrapper>
         <PageContainer>
-          <Title>Inserir Manutenção</Title>
+          <Title>{manutencaoId ? 'Editar' : 'Inserir'} Manutenção</Title>
           <Form onSubmit={handleSubmit}>
             <Label>Data:</Label>
-            <Input type="date" name="data" value={formData.data} onChange={handleChange} />
+            <Input type="date" name="data" value={formData.data} onChange={handleChange} required />
 
             <Label>Tipo:</Label>
-            <Select name="tipo" value={formData.tipo} onChange={handleChange}>
+            <Select name="tipo" value={formData.tipo} onChange={handleChange} required>
               <option value="">Selecione um tipo</option>
               {tiposManutencao.map(tipo => (
                 <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
@@ -115,15 +143,10 @@ const ManutencoesForm = () => {
             </Select>
 
             <Label>Descrição:</Label>
-            <TextArea 
-              name="descricao" 
-              value={formData.descricao} 
-              onChange={handleChange} 
-              placeholder="Descreva o serviço realizado"
-            />
+            <TextArea name="descricao" value={formData.descricao} onChange={handleChange} required />
 
             <Label>Responsável:</Label>
-            <Select name="responsavel" value={formData.responsavel} onChange={handleChange}>
+            <Select name="responsavel" value={formData.responsavel} onChange={handleChange} required>
               <option value="">Selecione um responsável</option>
               {usuarios.map(user => (
                 <option key={user.id} value={user.id}>{user.nome || user.email}</option>
@@ -131,25 +154,13 @@ const ManutencoesForm = () => {
             </Select>
 
             <Label>Custo:</Label>
-            <Input 
-              type="number" 
-              step="0.01" 
-              name="custo" 
-              value={formData.custo} 
-              onChange={handleChange} 
-              placeholder="R$ 0,00"
-            />
+            <Input type="number" step="0.01" name="custo" value={formData.custo} onChange={handleChange} required />
 
             <Label>Próxima Manutenção:</Label>
             <Input type="date" name="proxima" value={formData.proxima} onChange={handleChange} />
 
             <Label>Observações:</Label>
-            <TextArea 
-              name="observacoes" 
-              value={formData.observacoes} 
-              onChange={handleChange} 
-              placeholder="Observações adicionais"
-            />
+            <TextArea name="observacoes" value={formData.observacoes} onChange={handleChange} />
 
             <ButtonGroup>
               <CancelButton type="button" onClick={() => navigate(`/manutencoeslist?maquinario=${maquinarioId}`)}>

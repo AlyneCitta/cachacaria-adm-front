@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
 export const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; 
   padding: 30px;
 `;
 
@@ -8,6 +11,7 @@ export const PageContainer = styled.div`
   background-color: white;
   padding: 20px;
   border-radius: 8px;
+  flex: 1; 
 `;
 
 export const Title = styled.h2`
@@ -102,7 +106,7 @@ export const Td = styled.td`
 
 export const Actions = styled.div`
   display: flex;
-  justify-content: flex-start;  /* puxando para a esquerda */
+  justify-content: flex-start;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;

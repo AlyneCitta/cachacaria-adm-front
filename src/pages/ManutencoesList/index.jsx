@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import axios from 'axios';
 import {
   PageWrapper,
   PageContainer,
@@ -17,39 +16,41 @@ import {
   Breadcrumb,
   TopActions,
   NewButton,
-  BackButton
+  BackButton,
+  Actions,
+  EditButton,
+  DeleteButton
 } from './styles';
 
 const ManutencoesList = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const maquinaId = searchParams.get('maquinario');
   const [manutencoes, setManutencoes] = useState([]);
-  const [maquinarioId, setMaquinarioId] = useState(null);
 
+  // Força rolagem para o topo ao carregar o componente
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const id = params.get('maquinario');
-    setMaquinarioId(id);
-    fetchManutencoes(id);
-  }, [location.search]);
+    window.scrollTo(0, 0);
+  }, []);
 
-  const fetchManutencoes = async (id) => {
-    try {
-      const url = id
-        ? `http://localhost:3001/api/manutencoes?maquinario=${id}`
-        : 'http://localhost:3001/api/manutencoes';
-
-      const response = await axios.get(url);
-      setManutencoes(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar manutenções:', error);
-    }
+  const fetchList = () => {
+    fetch(`http://localhost:3001/api/manutencoes?maquinario=${maquinaId}`)
+      .then(res => res.json())
+      .then(setManutencoes)
+      .catch(console.error);
   };
 
-  const formatDate = (data) => {
-    if (!data) return '-';
-    const d = new Date(data);
-    return isNaN(d) ? '-' : d.toLocaleDateString('pt-BR');
+  useEffect(fetchList, [maquinaId]);
+
+  const onEdit = (id) => {
+    navigate(`/manutencoesform?maquinario=${maquinaId}&id=${id}`);
+  };
+
+  const onDelete = async (id) => {
+    if (!window.confirm('Deseja excluir esta manutenção?')) return;
+    const res = await fetch(`http://localhost:3001/api/manutencoes/${id}`, { method: 'DELETE' });
+    if (res.ok) fetchList();
+    else alert('Falha ao excluir');
   };
 
   return (
@@ -57,18 +58,23 @@ const ManutencoesList = () => {
       <Header />
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Home</span> &gt; <span>Manutenções</span>
+          <span onClick={() => navigate('/home')}>Home</span> &gt; 
+          <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
+          <span> Manutenções</span>
         </Breadcrumb>
       </BreadcrumbWrapper>
       <PageWrapper>
         <PageContainer>
+          <Title>Manutenções</Title>
           <TopActions>
-            <BackButton onClick={() => navigate('/maquinariolist')}>Voltar</BackButton>
-            <NewButton onClick={() => navigate(`/manutencoesform?maquinario=${maquinarioId}`)}>
+            <BackButton onClick={() => navigate('/maquinariolist')}>
+              Voltar
+            </BackButton>
+            <NewButton onClick={() => navigate(`/manutencoesform?maquinario=${maquinaId}`)}>
               Nova Manutenção
             </NewButton>
           </TopActions>
-          <Title>Manutenções</Title>
+
           <Table>
             <Thead>
               <Tr>
@@ -76,21 +82,26 @@ const ManutencoesList = () => {
                 <Th>Tipo</Th>
                 <Th>Descrição</Th>
                 <Th>Responsável</Th>
-                <Th>Valor</Th>
+                <Th>Custo</Th>
                 <Th>Próxima</Th>
-                <Th>Observações</Th>
+                <Th>Ações</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {manutencoes.map((m) => (
+              {manutencoes.map(m => (
                 <Tr key={m.id}>
-                  <Td>{formatDate(m.datamanutencao)}</Td>
+                  <Td>{new Date(m.datamanutencao).toLocaleDateString()}</Td>
                   <Td>{m.tipo}</Td>
                   <Td>{m.descricao}</Td>
                   <Td>{m.responsavel}</Td>
                   <Td>R$ {Number(m.custo).toFixed(2)}</Td>
-                  <Td>{formatDate(m.proximamanutencao)}</Td>
-                  <Td>{m.observacoes}</Td>
+                  <Td>{m.proximamanutencao ? new Date(m.proximamanutencao).toLocaleDateString() : '—'}</Td>
+                  <Td>
+                    <Actions>
+                      <EditButton onClick={() => onEdit(m.id)}>Editar</EditButton>
+                      <DeleteButton onClick={() => onDelete(m.id)}>Excluir</DeleteButton>
+                    </Actions>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>

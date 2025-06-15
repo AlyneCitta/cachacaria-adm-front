@@ -85,12 +85,14 @@ const MaquinarioForm = () => {
       <Header />
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Home</span> &gt; <span>{id ? 'Editar Maquinário' : 'Cadastro de Maquinário'}</span>
+          <span onClick={() => navigate('/home')}>Home</span> &gt; 
+          <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
+          <span>{id ? 'Editar Maquinário' : 'Cadastro de Maquinário'}</span>
         </Breadcrumb>
       </BreadcrumbWrapper>
       <PageWrapper>
         <PageContainer>
-          <Title>{id ? 'Editar Maquinário' : 'Cadastro de Maquinário'}</Title>
+          <Title>{id ? ' Editar Maquinário' : ' Cadastro de Maquinário'}</Title>
           <Form onSubmit={handleSubmit}>
             <Label>Nome:</Label>
             <Input name="nome" value={formData.nome} onChange={handleChange} required />

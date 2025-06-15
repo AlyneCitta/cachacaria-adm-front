@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
 export const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   padding: 30px;
 `;
 
@@ -10,6 +13,7 @@ export const PageContainer = styled.div`
   background-color: white;
   padding: 20px;
   border-radius: 8px;
+  flex: 1;
 `;
 
 export const Title = styled.h2`
@@ -71,6 +75,7 @@ export const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
+  gap: 12px; /* Adicionado para separar os botões */
 `;
 
 export const BreadcrumbWrapper = styled.div`
