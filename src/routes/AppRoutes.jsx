@@ -49,8 +49,9 @@ const AppRoutes = () => {
         <Route path="/compraform" element={<CompraForm />} />
         <Route path="/vendalist" element={<VendaList />} />
         <Route path="/vendaform" element={<VendaForm />} />
-        <Route path="/ordemproducaolist" element={<OrdemProducaoList />} />
-        <Route path="/ordemproducaof" element={<OrdemProducaoForm />} />
+        <Route path="/producao" element={<OrdemProducaoList />} />
+        <Route path="/producao/view/:id" element={<OrdemProducaoForm />} />
+        <Route path="/producao/new" element={<OrdemProducaoForm />} />
         <Route path="/estoquelist" element={<EstoqueList />} />
         <Route path="/consultaestoqueproduto" element={<ConsultaEstoqueProduto />} />
       </Routes>

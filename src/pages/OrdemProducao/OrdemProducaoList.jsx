@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../api/api';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -10,24 +11,37 @@ import {
 } from './Style';
 
 const OrdemProducaoList = () => {
-  const navigate = useNavigate();
-
+  const [ordens, setOrdens] = useState([]);
   const [filters, setFilters] = useState({
     produto: '',
     documento: '',
     data: '',
   });
 
-  const [ordens] = useState([
-    { id: 1, produto: 'Licor de Limão 1L', documento: '014', data: '01/01/2025', quantidade: 5 },
-    { id: 2, produto: 'Licor de Maracujá 1L', documento: '013', data: '01/01/2025', quantidade: 10 },
-    { id: 3, produto: 'Vodka 900ml', documento: '011', data: '01/01/2025', quantidade: 15 },
-  ]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchOrdens() {
+      try {
+        const response = await api.get('/api/producao/ordemproducao');
+        setOrdens(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar ordens de produção:', error);
+      }
+    }
+
+    fetchOrdens();
+  }, []);
+
+
+  const handleView = (produtoId) => {
+    navigate(`/producao/view/${produtoId}`);
+  };
 
   const filteredOrdens = ordens.filter(o =>
-    o.produto.toLowerCase().includes(filters.produto.toLowerCase()) &&
-    o.documento.includes(filters.documento) &&
-    o.data.includes(filters.data)
+    (o.descricao || '').toLowerCase().includes(filters.produto.toLowerCase()) &&
+    (o.nroordemproducao || '').toLowerCase().includes(filters.documento.toLowerCase()) &&
+    (new Date(o.dtaproducao).toLocaleDateString('pt-BR') || '').includes(filters.data)
   );
 
   return (
@@ -41,9 +55,10 @@ const OrdemProducaoList = () => {
       <PageWrapper>
         <PageContainer>
           <Title>Ordem de Produção</Title>
+
           <TopActions>
             <BackButton onClick={() => navigate('/home')}>Voltar</BackButton>
-            <NewButton onClick={() => navigate('/ordemproducao/form')}>Nova Ordem</NewButton>
+            <NewButton onClick={() => navigate('/producao/new')}>Nova Ordem</NewButton>
           </TopActions>
 
           <ContentWrapper>
@@ -51,24 +66,29 @@ const OrdemProducaoList = () => {
               <Table>
                 <Thead>
                   <Tr>
-                    <Th>Produto Produzido</Th>
-                    <Th>Número Documento</Th>
+                    <Th>Nº Ordem de Produção</Th>
+                    <Th>Produto</Th>
                     <Th>Data Produção</Th>
-                    <Th>Quantidade</Th>
+                    <Th>Quantidade Produzida</Th>
+                    <Th>Custo Produção</Th>
+                    <Th>Código Lote</Th>
+                    <Th>Responsável</Th>
                     <Th>Ações</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {filteredOrdens.map((o) => (
                     <Tr key={o.id}>
-                      <Td>{o.produto}</Td>
-                      <Td>{o.documento}</Td>
-                      <Td>{o.data}</Td>
-                      <Td>{o.quantidade}</Td>
+                      <Td>{o.nroordemproducao}</Td>
+                      <Td>{o.descricao}</Td>
+                      <Td>{new Date(o.dtaproducao).toLocaleDateString('pt-BR')}</Td>
+                      <Td>{o.qtdproduzida}</Td>
+                      <Td>{o.custoproducao?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Td>
+                      <Td>{o.codigolote}</Td>
+                      <Td>{o.nome}</Td>
                       <Td>
                         <Actions>
-                          <EditButton onClick={() => navigate(`/ordemproducao/form/${o.id}`)}>Editar</EditButton>
-                          <DeleteButton>Excluir</DeleteButton>
+                          <EditButton onClick={() => handleView(o.id)}>Visualizar</EditButton>
                         </Actions>
                       </Td>
                     </Tr>
@@ -79,9 +99,21 @@ const OrdemProducaoList = () => {
 
             <FilterContainer>
               <FilterTitle>Filtros</FilterTitle>
-              <FilterInput placeholder="Produto" value={filters.produto} onChange={e => setFilters({ ...filters, produto: e.target.value })} />
-              <FilterInput placeholder="Número de Documento" value={filters.documento} onChange={e => setFilters({ ...filters, documento: e.target.value })} />
-              <FilterInput placeholder="Data Produção" value={filters.data} onChange={e => setFilters({ ...filters, data: e.target.value })} />
+              <FilterInput
+                placeholder="Produto"
+                value={filters.produto}
+                onChange={e => setFilters({ ...filters, produto: e.target.value })}
+              />
+              <FilterInput
+                placeholder="Nº Ordem de Produção"
+                value={filters.documento}
+                onChange={e => setFilters({ ...filters, documento: e.target.value })}
+              />
+              <FilterInput
+                placeholder="Data Produção (dd/mm/aaaa)"
+                value={filters.data}
+                onChange={e => setFilters({ ...filters, data: e.target.value })}
+              />
             </FilterContainer>
           </ContentWrapper>
         </PageContainer>
