@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -26,49 +26,60 @@ import {
 
 const ClientesList = () => {
   const [search, setSearch] = useState('');
+  const [clientes, setClientes] = useState([]);
   const navigate = useNavigate();
 
-  const [clientes] = useState([
-    {
-      id: 1,
-      nome: 'João Silva',
-      datanasc: '1990-01-01',
-      email: 'joao@email.com',
-      telefone: '(11) 99999-9999',
-      cidade: 'Florianópolis'
-    },
-    {
-      id: 2,
-      nome: 'Maria Souza',
-      datanasc: '1985-05-12',
-      email: 'maria@email.com',
-      telefone: '(11) 98888-8888',
-      cidade: 'São Paulo'
+  const fetchClientes = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/clientes');
+      if (!response.ok) throw new Error('Erro ao buscar clientes');
+      const data = await response.json();
+      setClientes(data);
+    } catch (error) {
+      alert('Erro ao carregar clientes: ' + error.message);
     }
-  ]);
+  };
+
+  useEffect(() => {
+    fetchClientes();
+  }, []);
 
   const filteredClientes = clientes.filter((cliente) =>
     cliente.nome.toLowerCase().includes(search.toLowerCase())
   );
 
   const formatDate = (dateStr) => {
+    if (!dateStr) return '';
     const [year, month, day] = dateStr.split('-');
     return `${day}/${month}/${year}`;
   };
 
   const handleEdit = (id) => {
-    navigate(`/clientes/form/${id}`);
+    navigate(`/clientesform/${id}`);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmar = window.confirm('Tem certeza que deseja excluir este cliente?');
-    if (confirmar) {
-      alert(`Cliente ${id} excluído`);
+    if (!confirmar) return;
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/clientes/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        alert('Cliente excluído com sucesso');
+        fetchClientes();
+      } else {
+        const errorData = await response.json();
+        alert('Erro ao excluir cliente: ' + errorData.message);
+      }
+    } catch (error) {
+      alert('Erro ao excluir cliente: ' + error.message);
     }
   };
 
   const handleView = (id) => {
-    navigate(`/clientes/view/${id}`);
+    navigate(`http://localhost:3001/api/clientes/view/${id}`);
   };
 
   const handleNew = () => {
@@ -90,15 +101,13 @@ const ClientesList = () => {
   return (
     <>
       <Header />
-    <BreadcrumbWrapper>
+      <BreadcrumbWrapper>
         <Breadcrumb>
           <span onClick={goToHome}>Home</span> &gt; <span onClick={goToClientes}>Clientes</span>
         </Breadcrumb>
-       </BreadcrumbWrapper>
+      </BreadcrumbWrapper>
       <PageWrapper>
         <PageContainer>
-
-
           <Title>Lista de Clientes</Title>
 
           <TopActions>
@@ -120,7 +129,6 @@ const ClientesList = () => {
                 <Th>Data Nasc.</Th>
                 <Th>Email</Th>
                 <Th>Telefone</Th>
-                <Th>Cidade</Th>
                 <Th>Ações</Th>
               </Tr>
             </Thead>
@@ -128,13 +136,12 @@ const ClientesList = () => {
               {filteredClientes.map((cliente) => (
                 <Tr key={cliente.id}>
                   <Td>{cliente.nome}</Td>
-                  <Td>{formatDate(cliente.datanasc)}</Td>
-                  <Td>{cliente.email}</Td>
+                  <Td>{formatDate(cliente.dtanascimento || cliente.datanasc)}</Td>
+                  <Td>{cliente.emailcontato || cliente.email}</Td>
                   <Td>{cliente.telefone}</Td>
-                  <Td>{cliente.cidade}</Td>
                   <Td>
                     <Actions>
-                      <ViewButton onClick={() => handleView(cliente.id)}>Visualizar</ViewButton>
+                      <ViewButton onClick={() => navigate(`/clientesform/${cliente.id}?view=true`)}>Visualizar</ViewButton>
                       <EditButton onClick={() => handleEdit(cliente.id)}>Editar</EditButton>
                       <DeleteButton onClick={() => handleDelete(cliente.id)}>Excluir</DeleteButton>
                     </Actions>

@@ -10,6 +10,8 @@ import {
   Label,
   Input,
   Button,
+  CancelButton,
+  ButtonGroup,
   BreadcrumbWrapper,
   Breadcrumb
 } from './styles';
@@ -96,7 +98,12 @@ const MaquinarioForm = () => {
             <Label>Data de Aquisição:</Label>
             <Input type="date" name="aquisicao" value={formData.aquisicao} onChange={handleChange} required />
 
-            <Button type="submit">{id ? 'Atualizar' : 'Salvar'}</Button>
+            <ButtonGroup>
+              <CancelButton type="button" onClick={() => navigate('/maquinariolist')}>
+                Voltar
+              </CancelButton>
+              <Button type="submit">{id ? 'Atualizar' : 'Salvar'}</Button>
+            </ButtonGroup>
           </Form>
         </PageContainer>
       </PageWrapper>

@@ -31,11 +31,14 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/clientesform" element={<ClientesForm />} />
+        <Route path="/clientesform/:id" element={<ClientesForm />} />
         <Route path="/clienteslist" element={<ClientesList />} />
         <Route path="/fornecedoresform" element={<FornecedoresForm />} />
         <Route path="/fornecedoreslist" element={<FornecedoresList />} />
+        <Route path="/fornecedoresform/:id" element={<FornecedoresForm />} />
         <Route path="/manutencoesform" element={<ManutencoesForm />} />
         <Route path="/manutencoeslist" element={<ManutencoesList />} />
+        <Route path="/maquinarioform/:id" element={<MaquinarioForm />} />
         <Route path="/maquinarioform" element={<MaquinarioForm />} />
         <Route path="/maquinariolist" element={<MaquinarioList />} />
         <Route path="/produtos" element={<ProdutoList />} />

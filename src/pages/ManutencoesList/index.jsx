@@ -1,7 +1,8 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import axios from 'axios';
 import {
   PageWrapper,
   PageContainer,
@@ -13,34 +14,43 @@ import {
   Th,
   Td,
   BreadcrumbWrapper,
-  Breadcrumb
+  Breadcrumb,
+  TopActions,
+  NewButton,
+  BackButton
 } from './styles';
 
 const ManutencoesList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [manutencoes, setManutencoes] = useState([]);
+  const [maquinarioId, setMaquinarioId] = useState(null);
 
-  const manutencoes = [
-    {
-      id: 1,
-      data: '2023-11-15',
-      tipo: 'Preventiva',
-      descricao: 'Troca de óleo e ajustes',
-      responsavel: 'João',
-      custo: '250',
-      proxima: '2024-11-15',
-      observacoes: 'Tudo ok'
-    },
-    {
-      id: 2,
-      data: '2022-11-15',
-      tipo: 'Corretiva',
-      descricao: 'Substituição de válvula',
-      responsavel: 'Carlos',
-      custo: '480',
-      proxima: '2023-11-15',
-      observacoes: 'Peça original usada'
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('maquinario');
+    setMaquinarioId(id);
+    fetchManutencoes(id);
+  }, [location.search]);
+
+  const fetchManutencoes = async (id) => {
+    try {
+      const url = id
+        ? `http://localhost:3001/api/manutencoes?maquinario=${id}`
+        : 'http://localhost:3001/api/manutencoes';
+
+      const response = await axios.get(url);
+      setManutencoes(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar manutenções:', error);
     }
-  ];
+  };
+
+  const formatDate = (data) => {
+    if (!data) return '-';
+    const d = new Date(data);
+    return isNaN(d) ? '-' : d.toLocaleDateString('pt-BR');
+  };
 
   return (
     <>
@@ -52,6 +62,12 @@ const ManutencoesList = () => {
       </BreadcrumbWrapper>
       <PageWrapper>
         <PageContainer>
+          <TopActions>
+            <BackButton onClick={() => navigate('/maquinariolist')}>Voltar</BackButton>
+            <NewButton onClick={() => navigate(`/manutencoesform?maquinario=${maquinarioId}`)}>
+              Nova Manutenção
+            </NewButton>
+          </TopActions>
           <Title>Manutenções</Title>
           <Table>
             <Thead>
@@ -68,12 +84,12 @@ const ManutencoesList = () => {
             <Tbody>
               {manutencoes.map((m) => (
                 <Tr key={m.id}>
-                  <Td>{m.data}</Td>
+                  <Td>{formatDate(m.datamanutencao)}</Td>
                   <Td>{m.tipo}</Td>
                   <Td>{m.descricao}</Td>
                   <Td>{m.responsavel}</Td>
-                  <Td>R$ {m.custo}</Td>
-                  <Td>{m.proxima}</Td>
+                  <Td>R$ {Number(m.custo).toFixed(2)}</Td>
+                  <Td>{formatDate(m.proximamanutencao)}</Td>
                   <Td>{m.observacoes}</Td>
                 </Tr>
               ))}

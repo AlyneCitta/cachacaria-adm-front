@@ -1,5 +1,3 @@
-// styles.js para ManutencoesList
-
 import styled from 'styled-components';
 
 export const PageWrapper = styled.div`
@@ -10,7 +8,7 @@ export const PageContainer = styled.div`
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
 `;
 
@@ -55,8 +53,7 @@ export const Tbody = styled.tbody`
   }
 `;
 
-export const Tr = styled.tr`
-`;
+export const Tr = styled.tr``;
 
 export const Th = styled.th`
   padding: 12px;
@@ -67,4 +64,32 @@ export const Th = styled.th`
 export const Td = styled.td`
   padding: 10px;
   border: 1px solid #ddd;
+`;
+
+export const TopActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
+
+export const NewButton = styled.button`
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
+export const BackButton = styled(NewButton)`
+  background-color: #6c757d;
+
+  &:hover {
+    background-color: #5a6268;
+  }
 `;

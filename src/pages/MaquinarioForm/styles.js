@@ -45,11 +45,32 @@ export const Button = styled.button`
   font-size: 1rem;
   cursor: pointer;
   min-width: 120px;
-  margin-top: 20px;
 
   &:hover {
     background-color: #218838;
   }
+`;
+
+export const CancelButton = styled.button`
+  background-color: #6c757d;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  min-width: 120px;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 `;
 
 export const BreadcrumbWrapper = styled.div`

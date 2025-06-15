@@ -18,8 +18,10 @@ import {
   Actions,
   EditButton,
   DeleteButton,
+  ViewButton,
   TopActions,
-  NewButton
+  NewButton,
+  BackButton
 } from './styles';
 
 const MaquinarioList = () => {
@@ -55,7 +57,7 @@ const MaquinarioList = () => {
   };
 
   const handleNew = () => {
-    navigate('/maquinarioform');  // Aqui sem id para cadastro novo
+    navigate('/maquinarioform');
   };
 
   return (
@@ -71,6 +73,7 @@ const MaquinarioList = () => {
           <Title>Maquinários</Title>
 
           <TopActions>
+            <BackButton onClick={() => navigate('/home')}>Voltar</BackButton>
             <NewButton onClick={handleNew}>Novo Maquinário</NewButton>
           </TopActions>
 
@@ -91,7 +94,8 @@ const MaquinarioList = () => {
                   <Td>{new Date(item.dataaquisicao).toLocaleDateString()}</Td>
                   <Td>
                     <Actions>
-                      <EditButton onClick={() => handleEdit(item.id)}>Editar</EditButton>
+                     <ViewButton onClick={() => navigate(`/manutencoeslist?maquinario=${item.id}`)}>Manutenções</ViewButton>
+                     <EditButton onClick={() => handleEdit(item.id)}>Editar</EditButton>
                       <DeleteButton onClick={() => handleDelete(item.id)}>Excluir</DeleteButton>
                     </Actions>
                   </Td>

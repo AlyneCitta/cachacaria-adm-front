@@ -19,7 +19,7 @@ export const Form = styled.form`
 
 export const Label = styled.label`
   font-weight: bold;
-  font-size: 1;
+  font-size: 1rem;
 `;
 
 export const Input = styled.input`
@@ -27,6 +27,25 @@ export const Input = styled.input`
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 1rem;
+
+  &.visualizacao {
+    font-size: 0.8rem;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+`;
+
+export const Select = styled.select`
+  padding: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+
+  &.visualizacao {
+    font-size: 0.9rem;
+    background-color: #f9f9f9;
+    color: #333;
+  }
 `;
 
 export const ButtonGroup = styled.div`
@@ -63,8 +82,7 @@ export const Breadcrumb = styled.div`
 
   span {
     cursor: pointer;
-    color:rgba(0, 0, 0, 0.5);
-    //text-decoration: underline;
+    color: rgba(0, 0, 0, 0.5);
 
     &:hover {
       color: #0056b3;

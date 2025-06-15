@@ -102,7 +102,10 @@ export const Td = styled.td`
 
 export const Actions = styled.div`
   display: flex;
+  justify-content: flex-start;  /* puxando para a esquerda */
+  align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 `;
 
 export const ViewButton = styled.button`
