@@ -22,11 +22,15 @@ import OrdemProducaoList from  "../pages/OrdemProducao/OrdemProducaoList";
 import OrdemProducaoForm from  "../pages/OrdemProducao/OrdemProducaoForm";
 import EstoqueList from  "../pages/Estoque/EstoqueList";
 import ConsultaEstoqueProduto from  "../pages/Estoque/ConsultaEstoqueProduto";
+import Relatorio from '../pages/Relatorio/Relatorio';
+import Utensilios from '../pages/Utensilios/Utensilios';
+import Ingredientes from '../pages/Ingredientes/Ingredientes';
 
 const AppRoutes = () => {
   return (
-    <AuthProvider>
+    <AuthProvider>  
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -48,6 +52,9 @@ const AppRoutes = () => {
         <Route path="/ordemproducaof" element={<OrdemProducaoForm />} />
         <Route path="/estoquelist" element={<EstoqueList />} />
         <Route path="/consultaestoqueproduto" element={<ConsultaEstoqueProduto />} />
+        <Route path="/utensilios" element={<Utensilios />} />
+        <Route path="/relatorio" element={<Relatorio />} />
+        <Route path="/ingredientes" element={<Ingredientes />} />
       </Routes>
     </AuthProvider>
   );
