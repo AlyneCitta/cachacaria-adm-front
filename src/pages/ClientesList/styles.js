@@ -30,8 +30,7 @@ export const Breadcrumb = styled.div`
 
   span {
     cursor: pointer;
-    color:rgba(0, 0, 0, 0.5);
-    //text-decoration: underline;
+    color: rgba(0, 0, 0, 0.5);
 
     &:hover {
       color: #0056b3;
@@ -89,7 +88,7 @@ export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   background-color: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
 `;

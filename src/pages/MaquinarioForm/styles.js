@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
 export const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   padding: 30px;
 `;
 
@@ -10,6 +13,7 @@ export const PageContainer = styled.div`
   background-color: white;
   padding: 20px;
   border-radius: 8px;
+  flex: 1;
 `;
 
 export const Title = styled.h2`
@@ -45,11 +49,33 @@ export const Button = styled.button`
   font-size: 1rem;
   cursor: pointer;
   min-width: 120px;
-  margin-top: 20px;
 
   &:hover {
     background-color: #218838;
   }
+`;
+
+export const CancelButton = styled.button`
+  background-color: #6c757d;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  min-width: 120px;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 12px; /* Adicionado para separar os botões */
 `;
 
 export const BreadcrumbWrapper = styled.div`

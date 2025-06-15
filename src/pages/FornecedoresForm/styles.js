@@ -19,14 +19,34 @@ export const Form = styled.form`
 
 export const Label = styled.label`
   font-weight: bold;
-  font-size: 1;
+  font-size: 1rem;
 `;
 
 export const Input = styled.input`
-  padding: 3px;
+  padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 1rem;
+
+  &.visualizacao {
+    background-color: #f5f5f5;
+    border-color: transparent;
+    color: #666;
+  }
+`;
+
+export const Select = styled.select`
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+
+  &.visualizacao {
+    background-color: #f5f5f5;
+    border-color: transparent;
+    color: #666;
+    pointer-events: none;
+  }
 `;
 
 export const ButtonGroup = styled.div`

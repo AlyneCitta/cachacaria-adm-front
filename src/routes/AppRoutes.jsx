@@ -12,52 +12,58 @@ import ManutencoesList from "../pages/ManutencoesList";
 import ManutencoesForm from "../pages/ManutencoesForm";
 import MaquinarioList from "../pages/MaquinarioList";
 import MaquinarioForm from "../pages/MaquinarioForm";
-import ProdutoList from  "../pages/Produto/ProdutoList";
-import ProdutoForm from  "../pages/Produto/ProdutoForm";
-import CompraList from  "../pages/Compra/CompraList";
-import CompraForm from  "../pages/Compra/ComprasForm";
-import VendaList from  "../pages/Venda/VendasList";
-import VendaForm from  "../pages/Venda/VendasForm";
-import OrdemProducaoList from  "../pages/OrdemProducao/OrdemProducaoList";
-import OrdemProducaoForm from  "../pages/OrdemProducao/OrdemProducaoForm";
-import EstoqueList from  "../pages/Estoque/EstoqueList";
-import ConsultaEstoqueProduto from  "../pages/Estoque/ConsultaEstoqueProduto";
+import ProdutoList from "../pages/Produto/ProdutoList";
+import ProdutoForm from "../pages/Produto/ProdutoForm";
+import CompraList from "../pages/Compra/CompraList";
+import CompraForm from "../pages/Compra/ComprasForm";
+import VendaList from "../pages/Venda/VendasList";
+import VendaForm from "../pages/Venda/VendasForm";
+import OrdemProducaoList from "../pages/OrdemProducao/OrdemProducaoList";
+import OrdemProducaoForm from "../pages/OrdemProducao/OrdemProducaoForm";
+import EstoqueList from "../pages/Estoque/EstoqueList";
+import ConsultaEstoqueProduto from "../pages/Estoque/ConsultaEstoqueProduto";
 import Relatorio from '../pages/Relatorio/Relatorio';
 import Utensilios from '../pages/Utensilios/Utensilios';
 import Ingredientes from '../pages/Ingredientes/Ingredientes';
 
 const AppRoutes = () => {
   return (
-    <AuthProvider>  
+    <AuthProvider>
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/clientesform" element={<ClientesForm />} />
+        <Route path="/clientesform/:id" element={<ClientesForm />} />
         <Route path="/clienteslist" element={<ClientesList />} />
         <Route path="/fornecedoresform" element={<FornecedoresForm />} />
         <Route path="/fornecedoreslist" element={<FornecedoresList />} />
+        <Route path="/fornecedoresform/:id" element={<FornecedoresForm />} />
         <Route path="/manutencoesform" element={<ManutencoesForm />} />
+        <Route path="/manutencoesform/:id" element={<ManutencoesForm />} />
         <Route path="/manutencoeslist" element={<ManutencoesList />} />
+        <Route path="/maquinarioform/:id" element={<MaquinarioForm />} />
         <Route path="/maquinarioform" element={<MaquinarioForm />} />
         <Route path="/maquinariolist" element={<MaquinarioList />} />
-        <Route path="/produtolist" element={<ProdutoList />} />
-        <Route path="/produtoform" element={<ProdutoForm />} />
+        <Route path="/produtos" element={<ProdutoList />} />
+        <Route path="/produtos/edit/:id" element={<ProdutoForm />} />
+        <Route path="/produtos/new" element={<ProdutoForm />} />
         <Route path="/compralist" element={<CompraList />} />
         <Route path="/compraform" element={<CompraForm />} />
-        <Route path="/vendalist" element={<VendaList />} />        
+        <Route path="/vendalist" element={<VendaList />} />
         <Route path="/vendaform" element={<VendaForm />} />
-        <Route path="/ordemproducaolist" element={<OrdemProducaoList />} />
-        <Route path="/ordemproducaof" element={<OrdemProducaoForm />} />
+        <Route path="/producao" element={<OrdemProducaoList />} />
+        <Route path="/producao/view/:id" element={<OrdemProducaoForm />} />
+        <Route path="/producao/new" element={<OrdemProducaoForm />} />
         <Route path="/estoquelist" element={<EstoqueList />} />
         <Route path="/consultaestoqueproduto" element={<ConsultaEstoqueProduto />} />
         <Route path="/utensilios" element={<Utensilios />} />
         <Route path="/relatorio" element={<Relatorio />} />
         <Route path="/ingredientes" element={<Ingredientes />} />
+        
       </Routes>
     </AuthProvider>
   );
 };
 
-export default AppRoutes;
+export default AppRoutes;

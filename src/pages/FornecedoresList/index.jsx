@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -26,44 +26,54 @@ import {
 
 const FornecedoresList = () => {
   const [search, setSearch] = useState('');
+  const [fornecedores, setFornecedores] = useState([]);
   const navigate = useNavigate();
 
-  const [fornecedores] = useState([
-    {
-      id: 1,
-      nome: 'Distribuidora Sol',
-      cnpj: '12.345.678/0001-90',
-      email: 'contato@sol.com',
-      telefone: '(48) 99999-9999',
-      cidade: 'Florianópolis'
-    },
-    {
-      id: 2,
-      nome: 'Alimentos Brasil',
-      cnpj: '98.765.432/0001-10',
-      email: 'vendas@brasil.com',
-      telefone: '(11) 98888-8888',
-      cidade: 'São Paulo'
+  const fetchFornecedores = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/fornecedores');
+      if (!response.ok) throw new Error('Erro ao buscar fornecedores');
+      const data = await response.json();
+      setFornecedores(data);
+    } catch (error) {
+      alert('Erro ao carregar fornecedores: ' + error.message);
     }
-  ]);
+  };
+
+  useEffect(() => {
+    fetchFornecedores();
+  }, []);
 
   const filteredFornecedores = fornecedores.filter((fornecedor) =>
     fornecedor.nome.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleEdit = (id) => {
-    navigate(`/fornecedores/form/${id}`);
+    navigate(`/fornecedoresform/${id}`);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmar = window.confirm('Tem certeza que deseja excluir este fornecedor?');
-    if (confirmar) {
-      alert(`Fornecedor ${id} excluído`);
+    if (!confirmar) return;
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/fornecedores/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        alert('Fornecedor excluído com sucesso');
+        fetchFornecedores();
+      } else {
+        const errorData = await response.json();
+        alert('Erro ao excluir fornecedor: ' + errorData.message);
+      }
+    } catch (error) {
+      alert('Erro ao excluir fornecedor: ' + error.message);
     }
   };
 
   const handleView = (id) => {
-    navigate(`/fornecedores/view/${id}`);
+    navigate(`/fornecedoresform/${id}?view=true`);
   };
 
   const handleNew = () => {
@@ -113,7 +123,6 @@ const FornecedoresList = () => {
                 <Th>CNPJ</Th>
                 <Th>Email</Th>
                 <Th>Telefone</Th>
-                <Th>Cidade</Th>
                 <Th>Ações</Th>
               </Tr>
             </Thead>
@@ -121,10 +130,9 @@ const FornecedoresList = () => {
               {filteredFornecedores.map((fornecedor) => (
                 <Tr key={fornecedor.id}>
                   <Td>{fornecedor.nome}</Td>
-                  <Td>{fornecedor.cnpj}</Td>
-                  <Td>{fornecedor.email}</Td>
+                  <Td>{fornecedor.cpfcnpj}</Td>
+                  <Td>{fornecedor.emailcontato || fornecedor.email}</Td>
                   <Td>{fornecedor.telefone}</Td>
-                  <Td>{fornecedor.cidade}</Td>
                   <Td>
                     <Actions>
                       <ViewButton onClick={() => handleView(fornecedor.id)}>Visualizar</ViewButton>
