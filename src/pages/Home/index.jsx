@@ -29,7 +29,7 @@ const items = [
   { label: 'Utensílios', icon: utensiliosIcon, route: '/utensilios' },
   { label: 'Bebidas', icon: bebidasIcon, route: '/bebidas' },
   { label: 'Maquinário', icon: maquinarioIcon, route: '/maquinariolist' },
-  { label: 'Relatórios', icon: relatorioIcon, route: '/relatorios' },
+  { label: 'Relatórios', icon: relatorioIcon, route: '/relatorio' },
 ];
 
 const Home = () => {
