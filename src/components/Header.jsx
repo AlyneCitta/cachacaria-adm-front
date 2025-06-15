@@ -4,7 +4,8 @@ import logo from '../assets/logo.png';
 import profileIcon from '../assets/profileIcon.png';
 import { FaBars } from 'react-icons/fa';
 import SidebarMenu from './SidebarMenu';
-import { useAuth } from '../auth/AuthContext';  // Importa o contexto de auth
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderContainer = styled.header`
   background-color: #aeb6bd;
@@ -39,17 +40,6 @@ const ProfileSection = styled.div`
   gap: 10px;
 `;
 
-const ProfileText = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-`;
-
-const Name = styled.span`
-  font-weight: bold;
-  font-size: 18px;
-`;
-
 const ExitLink = styled.a`
   color: blue;
   font-size: 16px;
@@ -65,11 +55,30 @@ const ProfileImage = styled.img`
   height: 40px;
 `;
 
+const LoginButton = styled.button`
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #1f6391;
+  }
+`;
+
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef();
+  const navigate = useNavigate();
 
-  const { user, logout } = useAuth(); // Pega user e função logout do contexto
+  const { user, logout } = useAuth();
 
   const menuItems = [
     { label: 'Home', href: '/home' },
@@ -94,7 +103,7 @@ const Header = () => {
         </MenuIcon>
         <Logo src={logo} alt="Logo Cachaçaria Antônio Carlos" />
 
-        {user ? (  // Só mostra se tiver usuário logado
+        {user ? (
           <ProfileSection>
             <ProfileImage src={profileIcon} alt="Ícone do perfil" />
             <ExitLink href="/" onClick={(e) => {
@@ -104,7 +113,11 @@ const Header = () => {
               Sair →
             </ExitLink>
           </ProfileSection>
-        ) : null}
+        ) : (
+          <LoginButton onClick={() => navigate('/login')}>
+            Entrar
+          </LoginButton>
+        )}
       </HeaderContainer>
 
       <SidebarMenu
