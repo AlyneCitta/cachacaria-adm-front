@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+✅ Boas Práticas Utilizadas
+Este projeto segue uma série de boas práticas de desenvolvimento front-end, visando organização, manutenibilidade e integração eficiente com o back-end e banco de dados. Abaixo estão os principais padrões adotados:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+🔹 Organização de Arquivos e Componentes
+Estrutura de pastas modularizada, separando componentes reutilizáveis, páginas e serviços.
 
-## Available Scripts
+Separação clara entre lógica (.jsx) e estilização (.js ou .css), utilizando styled-components ou arquivos de estilo externos.
 
-In the project directory, you can run:
+🔹 Consumo de API
+Utilização da biblioteca axios com configuração centralizada de baseURL, integrando com o ambiente (VITE_API_URL).
 
-### `npm start`
+Requisições HTTP bem estruturadas, com tratamento de erros e uso de async/await.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Rotas protegidas com envio de token JWT via cabeçalho Authorization.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+🔹 Integração com Backend
+Integração com o back-end hospedado na plataforma Render.
 
-### `npm test`
+Comunicação com o banco de dados PostgreSQL hospedado na Railway por meio de rotas da API.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Separação entre rotas públicas e privadas no front.
 
-### `npm run build`
+🔹 Boas práticas de segurança e ambiente
+Uso de variáveis de ambiente (.env) para esconder URLs sensíveis e tokens.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Exclusão de arquivos sensíveis via .gitignore, como .env.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+🔹 Deploy e Hospedagem
+Deploy automatizado do front-end na Vercel, com integração contínua via GitHub.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Separação clara entre desenvolvimento local e produção, com URLs dinâmicas para APIs.
 
-### `npm run eject`
+🔹 Código Limpo
+Uso de funções bem nomeadas e componentes legíveis.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Uso de useEffect e useState com dependências bem definidas.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Evita duplicações e mantém a lógica centralizada.
