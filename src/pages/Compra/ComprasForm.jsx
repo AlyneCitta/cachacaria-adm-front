@@ -184,7 +184,7 @@ const VendasForm = () => {
         valorbruto: parseFloat(venda.valorBruto) || 0,
         valorliquido: parseFloat(venda.valorLiquido) || 0,
         valorfrete: parseFloat(venda.frete) || 0,
-        naturezamovimentacao: venda.natureza,
+        naturezamovimentacao: "compra",
         idf_identificacao: venda.idf_identificacao,
         idf_usuario: 1,
         itens: itens.map(item => {
@@ -347,31 +347,6 @@ const VendasForm = () => {
                     />
                   </div>
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Chave NFE</label>
-                    <Input
-                      name="chave"
-                      value={venda.chave}
-                      onChange={handleChange}
-                      disabled={isViewMode}
-                    />
-                  </div>
-                </FormRow>
-
-                <FormRow>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Natureza Movimentação</label>
-                    <select
-                      name="natureza"
-                      value={venda.natureza}
-                      onChange={handleChange}
-                      disabled={isViewMode}
-                      style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
-                    >
-                      <option value="">compra</option>
-                    </select>
-                  </div>
-
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <label style={{ marginBottom: 4, fontSize: 14 }}>Data Entrada</label>
                     <Input
                       name="dataEntrada"
@@ -381,6 +356,17 @@ const VendasForm = () => {
                       disabled={isViewMode}
                     />
                   </div>
+                </FormRow>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Chave NFE</label>
+                    <Input
+                      name="chave"
+                      value={venda.chave}
+                      onChange={handleChange}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                <FormRow>
                 </FormRow>
               </FormSection>
             </>
