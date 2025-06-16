@@ -128,7 +128,7 @@ const ProdutoForm = () => {
         alert('Produto criado com sucesso!');
       }
 
-      navigate('/produtos');
+      navigate('/bebidas');
     } catch (error) {
       console.error('Erro ao salvar o produto:', error);
       alert('Erro ao salvar o produto.');
@@ -173,14 +173,14 @@ const ProdutoForm = () => {
   };
 
   const goToHome = () => navigate('/home');
-  const goToProdutos = () => navigate('/produtos');
+  const goToProdutos = () => navigate('/bebidas');
 
   return (
     <>
       <Header />
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={goToHome}>Principal</span> &gt; <span onClick={goToProdutos}>Produtos</span> &gt; {id ? 'Editar Produto' : 'Incluir Produto'}
+          <span onClick={goToHome}>Principal</span> &gt; <span onClick={goToProdutos}>Bebidas</span> &gt; {id ? 'Editar Bebida' : 'Incluir Bebida'}
         </Breadcrumb>
       </BreadcrumbWrapper>
       <PageWrapper>
@@ -307,37 +307,52 @@ const ProdutoForm = () => {
               {composicao.length > 0 ? (
                 composicao.map((comp) => (
                   <CompositionRow key={comp.id}>
-                    <CompositionSelect
-                      value={comp.item}
-                      onChange={(e) => handleChangeComposicao(comp.id, 'item', e.target.value)}
-                    >
-                      <option value="">Item Composição</option>
-                      {itensComposicao.map((item) => (
-                        <option key={item.id} value={item.id}>{item.descricao}</option>
-                      ))}
-                    </CompositionSelect>
-                    <CompositionInput
-                      type="number"
-                      min="1"
-                      placeholder="Quantidade"
-                      value={comp.quantidade}
-                      onChange={(e) => handleChangeComposicao(comp.id, 'quantidade', e.target.value)}
-                    />
-                    <CompositionSelect
-                      value={comp.unidade}
-                      onChange={(e) => handleChangeComposicao(comp.id, 'unidade', e.target.value)}
-                    >
-                      <option value="">Unidade</option>
-                      {unidades.map((un) => (
-                        <option key={un.id} value={un.id}>{un.nome}</option>
-                      ))}
-                    </CompositionSelect>
-                    <RemoveButton onClick={() => handleRemoveComposicao(comp.id)}>-</RemoveButton>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginRight: '8px' }}>
+                      <label style={{ marginBottom: '4px', fontSize: '14px' }}>Item Composição</label>
+                      <CompositionSelect
+                        value={comp.item}
+                        onChange={(e) => handleChangeComposicao(comp.id, 'item', e.target.value)}
+                      >
+                        <option value="">Selecione o item</option>
+                        {itensComposicao.map((item) => (
+                          <option key={item.id} value={item.id}>{item.descricao}</option>
+                        ))}
+                      </CompositionSelect>
+                    </div>
+
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginRight: '8px' }}>
+                      <label style={{ marginBottom: '4px', fontSize: '14px' }}>Quantidade</label>
+                      <CompositionInput
+                        type="number"
+                        min="1"
+                        placeholder="Quantidade"
+                        value={comp.quantidade}
+                        onChange={(e) => handleChangeComposicao(comp.id, 'quantidade', e.target.value)}
+                      />
+                    </div>
+
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginRight: '8px' }}>
+                      <label style={{ marginBottom: '4px', fontSize: '14px' }}>Unidade</label>
+                      <CompositionSelect
+                        value={comp.unidade}
+                        onChange={(e) => handleChangeComposicao(comp.id, 'unidade', e.target.value)}
+                      >
+                        <option value="">Selecione a unidade</option>
+                        {unidades.map((un) => (
+                          <option key={un.id} value={un.id}>{un.nome}</option>
+                        ))}
+                      </CompositionSelect>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                      <RemoveButton onClick={() => handleRemoveComposicao(comp.id)}>-</RemoveButton>
+                    </div>
                   </CompositionRow>
                 ))
               ) : (
                 <p>Nenhuma composição cadastrada.</p>
               )}
+
               <div style={{ marginTop: '10px' }}>
                 <AddButton onClick={handleAddComposicao}>Adicionar Composição</AddButton>
               </div>

@@ -1,52 +1,218 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import api from '../../api/api';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import {
   PageWrapper, PageContainer, Title, BreadcrumbWrapper, Breadcrumb,
-  BackButton, SaveButton, CancelButton, FormSection, FormRow, Input, Select, ContentWrapper,
+  CancelButton, SaveButton, FormSection, FormRow, Input, ContentWrapper,
   AddButton, RemoveButton, CompositionRow, CompositionInput, CompositionSelect
 } from './Style';
 
-const ComprasForm = () => {
+const VendasForm = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { pathname } = useLocation();
+  const [clientes, setClientes] = useState([]);
+  const [produtos, setProdutos] = useState([]);
 
-  const [compra, setCompra] = useState({
-    fornecedor: '',
+  // detecta se está em /view/:id
+  const isViewMode = pathname.includes('/view/');
+
+  const [venda, setVenda] = useState({
+    cliente: '',
+    idf_identificacao: '',
     documento: '',
-    dataEntrada: '01/01/2025',
+    dataEmissao: '',
+    dataEntrada: '',
     valorBruto: '',
     valorLiquido: '',
-    uf: '',
     protocolo: '',
     frete: '',
     chave: '',
+    natureza: '',
   });
 
-  const [itens, setItens] = useState([
-    { id: 1, produto: '', quantidade: '', unidade: '', valorUnitario: '', valorTotal: '' }
-  ]);
+  const [itens, setItens] = useState([]);
+  const [unidades, setUnidades] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      setLoading(true);
+      api.get(`/api/compravenda/${id}`)
+        .then((response) => {
+          const data = response.data;
+
+          setVenda({
+            idf_identificacao: data.idf_identificacao || '',   // deve ser um número, tipo 2
+            documento: data.nrodocto || '',                    // número do documento
+            dataEmissao: formatDateInput(data.dtaemissao),
+            dataEntrada: formatDateInput(data.dtaentrada),
+            valorBruto: data.valorbruto?.toString() || '',
+            valorLiquido: data.valorliquido?.toString() || '',
+            protocolo: data.protocoloaut || '',
+            frete: data.valorfrete?.toString() || '',
+            chave: data.chavenfe || '',
+            natureza: data.naturezamovimentacao || '',
+          });
+
+
+          setItens(data.itens?.map((item, index) => ({
+            id: Date.now() + index,
+            produto: item.descricao || '',
+            quantidade: item.qtdmov?.toString() || '',
+            unidade: item.nome,
+            valorUnitario: item.valorunitario?.toString() || '',
+            valorTotal: ((item.qtdmov * item.valorunitario)?.toFixed(2)) || ''
+          })) || []);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Erro ao carregar venda:', err);
+          alert('Não foi possível carregar os dados.');
+          setLoading(false);
+        });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    api.get('/api/compravenda/compra/for')
+      .then(response => {
+        setClientes(response.data);
+      })
+      .catch(err => {
+        console.error('Erro ao carregar clientes:', err);
+        alert('Erro ao carregar a lista de clientes.');
+      });
+  }, []);
+
+
+  useEffect(() => {
+    api.get('/api/unidades')
+      .then(response => {
+        setUnidades(response.data);
+      })
+      .catch(err => {
+        console.error('Erro ao carregar unidades:', err);
+        alert('Erro ao carregar unidades.');
+      });
+  }, []);
+
+  useEffect(() => {
+    api.get('/api/products/produto/preco')
+      .then(response => {
+        setProdutos(response.data);
+      })
+      .catch(err => {
+        console.error('Erro ao carregar produtos:', err);
+        alert('Erro ao carregar produtos.');
+      });
+  }, []);
+
+  const formatCurrency = (value) => {
+    if (value === '' || isNaN(value)) return '';
+    return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
+
+  const onlyNumbersAndComma = (value) => {
+    return value.replace(/[^\d,]/g, '').replace(',', '.');
+  };
+
+  const formatNumber = (value) => {
+    return value.replace(/[^0-9]/g, '');
+  };
+
+  const parseCurrency = (value) => {
+    const num = value.replace(/[^\d,.-]/g, '').replace(',', '.');
+    return isNaN(num) ? '' : num;
+  };
+
+
+  const formatDateInput = dateString => {
+    if (!dateString) return '';
+    const d = new Date(dateString);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCompra({ ...compra, [name]: value });
+    setVenda((prev) => ({
+      ...prev,
+      [name]: name === 'idf_identificacao' ? parseInt(value, 10) : value,
+    }));
   };
+
+
+
 
   const handleAddItem = () => {
-    setItens([...itens, { id: Date.now(), produto: '', quantidade: '', unidade: '', valorUnitario: '', valorTotal: '' }]);
+    setItens(a => [...a, { id: Date.now(), produto: '', quantidade: '', unidade: '', valorUnitario: '', valorTotal: '' }]);
   };
 
-  const handleRemoveItem = (id) => {
-    setItens(itens.filter((item) => item.id !== id));
+  const handleRemoveItem = remId => {
+    setItens(a => a.filter(i => i.id !== remId));
   };
 
-  const handleItemChange = (id, field, value) => {
-    setItens(itens.map(item => item.id === id ? { ...item, [field]: value } : item));
+  const handleItemChange = (itemId, field, val) => {
+    setItens(prevItens =>
+      prevItens.map(item => {
+        if (item.id === itemId) {
+          const updatedItem = { ...item, [field]: val };
+
+          if (field === 'quantidade' && updatedItem.valorUnitario) {
+            const total = (parseFloat(val || 0) * parseFloat(updatedItem.valorUnitario || 0)).toFixed(2);
+            updatedItem.valorTotal = isNaN(total) ? '' : total;
+          }
+
+          return updatedItem;
+        }
+        return item;
+      })
+    );
   };
 
-  const handleSave = () => {
-    alert('Compra salva com sucesso!');
-    navigate('/compraslist');
+
+  const handleSave = async () => {
+    try {
+      const payload = {
+        nrodocto: venda.documento,
+        protocoloaut: venda.protocolo,
+        chavenfe: venda.chave,
+        dtaemissao: venda.dataEmissao,
+        dtaentrada: venda.dataEntrada,
+        valorbruto: parseFloat(venda.valorBruto) || 0,
+        valorliquido: parseFloat(venda.valorLiquido) || 0,
+        valorfrete: parseFloat(venda.frete) || 0,
+        naturezamovimentacao: venda.natureza,
+        idf_identificacao: venda.idf_identificacao,
+        idf_usuario: 1,
+        itens: itens.map(item => {
+          const produtoObj = produtos.find(p => p.descricao === item.produto);
+          const unidadeObj = unidades.find(u => u.nome === item.unidade);
+
+          return {
+            qtdmov: parseInt(item.quantidade) || 0,
+            valorunitario: parseFloat(item.valorUnitario) || 0,
+            idf_produto: produtoObj?.id || null,
+            idf_lote: 1,
+            idf_unidade: unidadeObj?.id || null
+          };
+        })
+
+      };
+
+      console.log('aa');
+
+      console.log('Payload final para envio:', payload);
+
+      await api.post('/api/compravenda/new/compra', payload);
+      alert('Documento salvo com sucesso!');
+      navigate('/compras');
+    } catch (error) {
+      console.error('Erro ao salvar venda:', error);
+      alert('Erro ao salvar o documento de venda.');
+    }
   };
 
   return (
@@ -54,66 +220,304 @@ const ComprasForm = () => {
       <Header />
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Principal</span> &gt; <span onClick={() => navigate('/compralist')}>Compras</span> &gt; Incluir Documento
+          <span onClick={() => navigate('/home')}>Principal</span> &gt;{' '}
+          <span onClick={() => navigate('/compras')}>Vendas</span> &gt;{' '}
+          {isViewMode ? 'Visualizar Documento' : id ? 'Editar Documento' : 'Nova Venda'}
         </Breadcrumb>
       </BreadcrumbWrapper>
-
       <PageWrapper>
         <PageContainer>
-          <Title>Compras</Title>
+          <Title>
+            {isViewMode ? 'Visualizar Venda' : id ? 'Editar Venda' : 'Nova Venda'}
+          </Title>
 
-          <FormSection>
-            <FormRow>
-              <Input name="fornecedor" placeholder="Fornecedor" value={compra.fornecedor} onChange={handleChange} />
-              <Input name="dataEntrada" placeholder="Data de Entrada" value={compra.dataEntrada} onChange={handleChange} />
-            </FormRow>
+          {loading ? (
+            <p>Carregando dados...</p>
+          ) : (
+            <>
+              <FormSection>
+                <FormRow>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Cliente</label>
+                    <select
+                      name="idf_identificacao"
+                      value={venda.idf_identificacao}
+                      onChange={handleChange}
+                      disabled={isViewMode}
+                      style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
+                    >
+                      <option value="">Selecione um cliente</option>
+                      {clientes.map(cli => (
+                        <option key={cli.id} value={cli.id}>
+                          {cli.nome}
+                        </option>
+                      ))}
+                    </select>
 
-            <FormRow>
-              <Input name="documento" placeholder="Número Documento" value={compra.documento} onChange={handleChange} />
-              <Input name="valorBruto" placeholder="Valor Bruto" value={compra.valorBruto} onChange={handleChange} />
-            </FormRow>
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Data de Emissão</label>
+                    <Input
+                      name="dataEmissao"
+                      type="date"
+                      value={venda.dataEmissao}
+                      onChange={handleChange}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                </FormRow>
 
-            <FormRow>
-              <Select name="uf" value={compra.uf} onChange={handleChange}>
-                <option value="">UF Emitente</option>
-                <option value="Santa Catarina">Santa Catarina</option>
-              </Select>
-              <Input name="valorLiquido" placeholder="Valor Líquido" value={compra.valorLiquido} onChange={handleChange} />
-            </FormRow>
+                <FormRow>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Número Documento</label>
+                    <Input
+                      name="documento"
+                      value={venda.documento}
+                      onChange={handleChange}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Bruto</label>
+                    <Input
+                      name="valorBruto"
+                      value={venda.valorBruto}
+                      onChange={(e) => {
+                        const numericValue = onlyNumbersAndComma(e.target.value);
+                        setVenda((prev) => ({ ...prev, valorBruto: numericValue }));
+                      }}
+                      onBlur={() => {
+                        setVenda((prev) => ({
+                          ...prev,
+                          valorBruto: prev.valorBruto ? parseFloat(prev.valorBruto).toFixed(2) : '0.00',
+                        }));
+                      }}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                </FormRow>
 
-            <FormRow>
-              <Input name="protocolo" placeholder="Protocolo de Autorização" value={compra.protocolo} onChange={handleChange} />
-              <Input name="frete" placeholder="Valor do Frete" value={compra.frete} onChange={handleChange} />
-            </FormRow>
+                <FormRow>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Líquido</label>
+                    <Input
+                      name="valorLiquido"
+                      value={venda.valorLiquido}
+                      onChange={(e) => {
+                        const numericValue = onlyNumbersAndComma(e.target.value);
+                        setVenda((prev) => ({ ...prev, valorLiquido: numericValue }));
+                      }}
+                      onBlur={() => {
+                        setVenda((prev) => ({
+                          ...prev,
+                          valorLiquido: prev.valorLiquido ? parseFloat(prev.valorLiquido).toFixed(2) : '0.00',
+                        }));
+                      }}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Protocolo de Autorização</label>
+                    <Input
+                      name="protocolo"
+                      value={venda.protocolo}
+                      onChange={handleChange}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                </FormRow>
 
-            <FormRow>
-              <Input name="chave" placeholder="Chave NFE" value={compra.chave} onChange={handleChange} />
-            </FormRow>
-          </FormSection>
+                <FormRow>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Valor do Frete</label>
+                    <Input
+                      name="frete"
+                      value={venda.frete}
+                      onChange={(e) => {
+                        const numericValue = onlyNumbersAndComma(e.target.value);
+                        setVenda((prev) => ({ ...prev, frete: numericValue }));
+                      }}
+                      onBlur={() => {
+                        setVenda((prev) => ({
+                          ...prev,
+                          frete: prev.frete ? parseFloat(prev.frete).toFixed(2) : '0.00',
+                        }));
+                      }}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Chave NFE</label>
+                    <Input
+                      name="chave"
+                      value={venda.chave}
+                      onChange={handleChange}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                </FormRow>
 
+                <FormRow>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Natureza Movimentação</label>
+                    <select
+                      name="natureza"
+                      value={venda.natureza}
+                      onChange={handleChange}
+                      disabled={isViewMode}
+                      style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
+                    >
+                      <option value="">compra</option>
+                    </select>
+                  </div>
+
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Data Entrada</label>
+                    <Input
+                      name="dataEntrada"
+                      type="date"
+                      value={venda.dataEntrada}
+                      onChange={handleChange}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                </FormRow>
+              </FormSection>
+            </>
+          )}
           <Title>Itens</Title>
-
           <FormSection>
             {itens.map(item => (
               <CompositionRow key={item.id}>
-                <CompositionSelect value={item.produto} onChange={(e) => handleItemChange(item.id, 'produto', e.target.value)}>
-                  <option value="">Produto</option>
-                  <option value="Produto A">Produto A</option>
-                  <option value="Produto B">Produto B</option>
-                </CompositionSelect>
-                <CompositionInput placeholder="Quantidade" value={item.quantidade} onChange={(e) => handleItemChange(item.id, 'quantidade', e.target.value)} />
-                <CompositionInput placeholder="Unidade" value={item.unidade} onChange={(e) => handleItemChange(item.id, 'unidade', e.target.value)} />
-                <CompositionInput placeholder="Valor Unitário" value={item.valorUnitario} onChange={(e) => handleItemChange(item.id, 'valorUnitario', e.target.value)} />
-                <CompositionInput placeholder="Valor Total" value={item.valorTotal} onChange={(e) => handleItemChange(item.id, 'valorTotal', e.target.value)} />
-                <AddButton onClick={handleAddItem}>+</AddButton>
-                <RemoveButton onClick={() => handleRemoveItem(item.id)}>-</RemoveButton>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ marginBottom: 4, fontSize: 14 }}>Produto</label>
+                  <select
+                    value={item.produto}
+                    onChange={(e) => {
+                      const produtoSelecionado = e.target.value;
+                      const produtoObj = produtos.find(p => p.descricao === produtoSelecionado);
+                      handleItemChange(item.id, 'produto', produtoSelecionado);
+                      handleItemChange(item.id, 'valorUnitario', produtoObj ? produtoObj.preco.toString() : '');
+                      if (produtoObj && item.quantidade) {
+                        const total = (parseFloat(item.quantidade) * produtoObj.preco).toFixed(2);
+                        handleItemChange(item.id, 'valorTotal', total);
+                      }
+                    }}
+                    disabled={isViewMode}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
+                  >
+                    <option value="">Selecione um produto</option>
+
+                    {/* ✅ Garante exibição correta mesmo que o produto não esteja na lista */}
+                    {(!produtos.some(p => p.descricao === item.produto) && item.produto) && (
+                      <option value={item.produto}>{item.produto}</option>
+                    )}
+
+                    {produtos.map(p => (
+                      <option key={p.id} value={p.descricao}>
+                        {p.descricao}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ marginBottom: 4, fontSize: 14 }}>Quantidade</label>
+                  <CompositionInput
+                    placeholder="Quantidade"
+                    value={item.quantidade}
+                    onChange={(e) => {
+                      const intVal = formatNumber(e.target.value);
+                      handleItemChange(item.id, 'quantidade', intVal);
+
+                      // Atualiza total se já tiver valorUnitario preenchido:
+                      if (item.valorUnitario) {
+                        const total = (parseFloat(item.valorUnitario) * parseInt(intVal || 0)).toFixed(2);
+                        handleItemChange(item.id, 'valorTotal', isNaN(total) ? '' : total);
+                      }
+                    }}
+                    disabled={isViewMode}
+                  />
+
+                </div>
+
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ marginBottom: 4, fontSize: 14 }}>Unidade</label>
+                  <select
+                    value={item.unidade}
+                    onChange={e => handleItemChange(item.id, 'unidade', e.target.value)}
+                    disabled={isViewMode}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
+                  >
+                    <option value="">Selecione uma unidade</option>
+                    {(!unidades.some(u => u.nome === item.unidade) && item.unidade) && (
+                      <option value={item.unidade}>{item.unidade}</option>
+                    )}
+
+                    {unidades.map(un => (
+                      <option key={un.id} value={un.nome}>
+                        {un.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Unitário</label>
+                  <CompositionInput
+                    placeholder="Valor Unitário"
+                    value={item.valorUnitario}
+                    onChange={(e) => {
+                      const numeric = onlyNumbersAndComma(e.target.value);
+                      handleItemChange(item.id, 'valorUnitario', numeric);
+
+                      if (numeric && item.quantidade) {
+                        const total = (parseFloat(numeric) * parseInt(item.quantidade)).toFixed(2);
+                        handleItemChange(item.id, 'valorTotal', total);
+                      }
+                    }}
+                    onBlur={() => {
+                      handleItemChange(item.id, 'valorUnitario', item.valorUnitario ? parseFloat(item.valorUnitario).toFixed(2) : '0.00');
+                    }}
+                    disabled={isViewMode}
+                  />
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Total</label>
+                  <CompositionInput
+                    placeholder="Valor Total"
+                    value={item.valorTotal}
+                    onChange={(e) => {
+                      const numeric = onlyNumbersAndComma(e.target.value);
+                      handleItemChange(item.id, 'valorTotal', numeric);
+                    }}
+                    onBlur={() => {
+                      handleItemChange(item.id, 'valorTotal', item.valorTotal ? parseFloat(item.valorTotal).toFixed(2) : '0.00');
+                    }}
+                    disabled={true}
+                    readOnly={true}
+                  />
+                </div>
+                {!isViewMode && (
+                  <>
+                    <AddButton onClick={handleAddItem}>+</AddButton>
+                    <RemoveButton onClick={() => handleRemoveItem(item.id)}>-</RemoveButton>
+                  </>
+                )}
               </CompositionRow>
             ))}
+            {/* ✅ Botão para adicionar o primeiro item */}
+            {!isViewMode && itens.length === 0 && (
+              <div style={{ marginTop: '10px' }}>
+                <AddButton onClick={handleAddItem}>Adicionar Item</AddButton>
+              </div>
+            )}
           </FormSection>
 
-          <div style={{ marginTop: '20px' }}>
-            <CancelButton onClick={() => navigate('/compraslist')}>Cancelar</CancelButton>
-            <SaveButton onClick={handleSave}>Salvar</SaveButton>
+
+          <div style={{ marginTop: 20 }}>
+            <CancelButton onClick={() => navigate('/compras')}>Cancelar</CancelButton>
+            {!isViewMode && <SaveButton onClick={handleSave}>Salvar</SaveButton>}
           </div>
         </PageContainer>
       </PageWrapper>
@@ -122,4 +526,4 @@ const ComprasForm = () => {
   );
 };
 
-export default ComprasForm;
+export default VendasForm;

@@ -45,18 +45,20 @@ const AppRoutes = () => {
         <Route path="/maquinarioform/:id" element={<MaquinarioForm />} />
         <Route path="/maquinarioform" element={<MaquinarioForm />} />
         <Route path="/maquinariolist" element={<MaquinarioList />} />
-        <Route path="/produtos" element={<ProdutoList />} />
-        <Route path="/produtos/edit/:id" element={<ProdutoForm />} />
-        <Route path="/produtos/new" element={<ProdutoForm />} />
-        <Route path="/compralist" element={<CompraList />} />
-        <Route path="/compraform" element={<CompraForm />} />
-        <Route path="/vendalist" element={<VendaList />} />
-        <Route path="/vendaform" element={<VendaForm />} />
+        <Route path="/bebidas" element={<ProdutoList />} />
+        <Route path="/bebidas/edit/:id" element={<ProdutoForm />} />
+        <Route path="/bebidas/new" element={<ProdutoForm />} />
+        <Route path="/compras" element={<CompraList />} />
+        <Route path="/compras/view/:id" element={<CompraForm />} />
+        <Route path="/compras/new" element={<CompraForm />} />
+        <Route path="/vendas" element={<VendaList />} />
+        <Route path="/vendas/view/:id" element={<VendaForm />} />
+        <Route path="/vendas/new" element={<VendaForm />} />
         <Route path="/producao" element={<OrdemProducaoList />} />
         <Route path="/producao/view/:id" element={<OrdemProducaoForm />} />
         <Route path="/producao/new" element={<OrdemProducaoForm />} />
-        <Route path="/estoquelist" element={<EstoqueList />} />
-        <Route path="/consultaestoqueproduto" element={<ConsultaEstoqueProduto />} />
+        <Route path="/estoque" element={<EstoqueList />} />
+        <Route path="/estoque/view/:IdProduct" element={<ConsultaEstoqueProduto />} />        
         <Route path="/utensilios" element={<Utensilios />} />
         <Route path="/relatorio" element={<Relatorio />} />
         <Route path="/ingredientes" element={<Ingredientes />} />

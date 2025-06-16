@@ -69,7 +69,7 @@ const ProdutoList = () => {
   );
 
   const handleEdit = (produtoId) => {    
-    navigate(`/produtos/edit/${produtoId}`);
+    navigate(`/bebidas/edit/${produtoId}`);
   };
 
   const handleDelete = (id, codigo) => {
@@ -94,7 +94,7 @@ const ProdutoList = () => {
   };
 
   const handleNew = () => {
-    navigate('/produtos/new');
+    navigate('/bebidas/new');
   };
 
   const handleBack = () => {
@@ -106,7 +106,7 @@ const ProdutoList = () => {
   };
 
   const goToProdutos = () => {
-    navigate('/produtos');
+    navigate('/bebidas');
   };
 
   const formatDate = (dateString) => {
@@ -125,7 +125,7 @@ const ProdutoList = () => {
       <Header />
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={goToHome}>Principal</span> &gt; <span onClick={goToProdutos}>Produtos</span>
+          <span onClick={goToHome}>Principal</span> &gt; <span onClick={goToProdutos}>Bebidas</span>
         </Breadcrumb>
       </BreadcrumbWrapper>
 

@@ -1,40 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api/api';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import {
-  PageWrapper, PageContainer, Title, BreadcrumbWrapper, Breadcrumb,
-  Table, Thead, Tbody, Tr, Th, Td, Actions, EditButton,
-  BackButton, TopActions, FilterContainer, FilterTitle, FilterInput,
-  ContentWrapper, TableWrapper
+  PageWrapper,
+  PageContainer,
+  Title,
+  BreadcrumbWrapper,
+  Breadcrumb,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Actions,
+  EditButton,
+  BackButton,
+  TopActions,
+  FilterContainer,
+  FilterTitle,
+  FilterInput,
+  ContentWrapper,
+  TableWrapper,
 } from './style';
 
 const EstoqueList = () => {
   const navigate = useNavigate();
-
   const [filters, setFilters] = useState({
-    produto: '',
+    codigo: '',
     descricao: '',
     categoria: '',
     sabor: '',
+    unidade: '',
   });
 
-  const [estoque] = useState([
-    { id: 1, descricao: 'Licor de Limão 1L', categoria: 'Licor', sabor: 'Limão', quantidade: 23 },
-    { id: 2, descricao: 'Licor de Maracujá 1L', categoria: 'Licor', sabor: 'Maracujá', quantidade: 25 },
-    { id: 3, descricao: 'Coquetel de Bitter 1L', categoria: 'Coquetel Alcoólico', sabor: 'Bitter', quantidade: 35 },
-    { id: 4, descricao: 'Vodka 900ml', categoria: 'Vodka', sabor: 'Vodka', quantidade: 34 },
-    { id: 5, descricao: 'Cachaça 900ml', categoria: 'Cachaça', sabor: 'Aguardente de Cana', quantidade: 43 },
-  ]);
+  const [estoque, setEstoque] = useState([]);
+
+  useEffect(() => {
+    async function fetchProdutos() {
+      try {
+        const response = await api.get('/api/products');
+        setEstoque(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+      }
+    }
+
+    fetchProdutos();
+  }, []);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('pt-BR');
+  };
+
+  const formatCurrency = (value) => {
+    return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
 
   const filteredEstoque = estoque.filter((item) =>
+    item.codigo.toLowerCase().includes(filters.codigo.toLowerCase()) &&
     item.descricao.toLowerCase().includes(filters.descricao.toLowerCase()) &&
     item.categoria.toLowerCase().includes(filters.categoria.toLowerCase()) &&
-    item.sabor.toLowerCase().includes(filters.sabor.toLowerCase())
+    item.sabor.toLowerCase().includes(filters.sabor.toLowerCase()) &&
+    item.unidade.toLowerCase().includes(filters.unidade.toLowerCase())
   );
 
   const handleEdit = (id) => {
-    navigate(`/produtos/form/${id}`);
+    navigate(`/estoque/view/${id}`);
   };
 
   return (
@@ -59,23 +94,45 @@ const EstoqueList = () => {
               <Table>
                 <Thead>
                   <Tr>
+                    <Th>Código</Th>
                     <Th>Descrição</Th>
+                    <Th>Ativo</Th>
+                    <Th>Tem Composição</Th>
+                    <Th>Preço</Th>
+                    <Th>Capacidade (ml)</Th>
+                    <Th>Custo</Th>
+                    <Th>Estoque Mínimo</Th>
+                    <Th>Código EAN</Th>
+                    <Th>Código Barras</Th>
+                    <Th>Data Cadastro</Th>
+                    <Th>Data Alteração</Th>
                     <Th>Categoria</Th>
                     <Th>Sabor</Th>
-                    <Th>Quantidade</Th>
+                    <Th>Unidade</Th>
                     <Th>Ações</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {filteredEstoque.map((item) => (
-                    <Tr key={item.id}>
+                    <Tr key={item.id_produto}>
+                      <Td>{item.codigo}</Td>
                       <Td>{item.descricao}</Td>
+                      <Td>{item.ativo ? 'Sim' : 'Não'}</Td>
+                      <Td>{item.temcomposicao ? 'Sim' : 'Não'}</Td>
+                      <Td>{formatCurrency(item.preco)}</Td>
+                      <Td>{item.capacidade_ml}</Td>
+                      <Td>{formatCurrency(item.custo)}</Td>
+                      <Td>{item.estoqueminimo}</Td>
+                      <Td>{item.codigoean}</Td>
+                      <Td>{item.codigobarras}</Td>
+                      <Td>{formatDate(item.dtacadastro)}</Td>
+                      <Td>{formatDate(item.dtaalteracao)}</Td>
                       <Td>{item.categoria}</Td>
                       <Td>{item.sabor}</Td>
-                      <Td>{item.quantidade}</Td>
+                      <Td>{item.unidade}</Td>
                       <Td>
                         <Actions>
-                          <EditButton onClick={() => handleEdit(item.id)}>Visualizar</EditButton>
+                          <EditButton onClick={() => handleEdit(item.id_produto)}>Visualizar</EditButton>
                         </Actions>
                       </Td>
                     </Tr>
@@ -87,9 +144,9 @@ const EstoqueList = () => {
             <FilterContainer>
               <FilterTitle>Filtros</FilterTitle>
               <FilterInput
-                placeholder="Produto"
-                value={filters.produto}
-                onChange={(e) => setFilters({ ...filters, produto: e.target.value })}
+                placeholder="Código"
+                value={filters.codigo}
+                onChange={(e) => setFilters({ ...filters, codigo: e.target.value })}
               />
               <FilterInput
                 placeholder="Descrição"
@@ -105,6 +162,11 @@ const EstoqueList = () => {
                 placeholder="Sabor"
                 value={filters.sabor}
                 onChange={(e) => setFilters({ ...filters, sabor: e.target.value })}
+              />
+              <FilterInput
+                placeholder="Unidade"
+                value={filters.unidade}
+                onChange={(e) => setFilters({ ...filters, unidade: e.target.value })}
               />
             </FilterContainer>
           </ContentWrapper>

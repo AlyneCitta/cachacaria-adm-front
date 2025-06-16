@@ -1,22 +1,22 @@
 import styled from 'styled-components';
 
-// Layout principal
+// Estrutura geral
 export const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 `;
 
-export const PageContainer = styled.div`
+export const PageContainer = styled.div`  
   margin: 50px;
 `;
 
 export const Title = styled.h1`
   font-size: 24px;
   margin-bottom: 20px;
+  text-align: center; /* Centraliza o título */
 `;
 
-// Breadcrumbs
 export const BreadcrumbWrapper = styled.div`
   background-color: #f1f1f1;
   padding: 10px 20px;
@@ -32,10 +32,22 @@ export const Breadcrumb = styled.div`
   }
 `;
 
-// Tabela (listagens)
+export const TopActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
+
+// Tabela
+export const TableWrapper = styled.div`
+  flex: 1;
+  overflow-x: auto; /* Scroll horizontal */
+`;
+
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  min-width: 1200px; /* Força largura mínima para ativar o scroll horizontal */
 `;
 
 export const Thead = styled.thead`
@@ -46,15 +58,25 @@ export const Tbody = styled.tbody``;
 
 export const Tr = styled.tr`
   border-bottom: 1px solid #ccc;
+
+  /* Zebra striping - Linhas pares com cor diferente */
+  &:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  &:nth-child(odd) {
+    background-color: #ffffff;
+  }
 `;
 
 export const Th = styled.th`
   padding: 10px;
-  text-align: left;
+  text-align: center; /* Centraliza os títulos */
 `;
 
 export const Td = styled.td`
   padding: 10px;
+  text-align: center; /* Centraliza todas as células */
 `;
 
 export const Actions = styled.div`
@@ -62,6 +84,7 @@ export const Actions = styled.div`
   gap: 8px;
 `;
 
+// Botões principais
 export const EditButton = styled.button`
   background-color: #ffc107;
   color: #fff;
@@ -107,12 +130,6 @@ export const CancelButton = styled(BackButton)`
   margin-right: 10px;
 `;
 
-export const TopActions = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-`;
-
 // Filtros
 export const FilterContainer = styled.div`
   background-color: #f5f5f5;
@@ -139,11 +156,6 @@ export const ContentWrapper = styled.div`
   gap: 20px;
 `;
 
-export const TableWrapper = styled.div`
-  flex: 1;
-`;
-
-// Tabs (para Produtos)
 export const TabContainer = styled.div`
   display: flex;
   gap: 5px;
@@ -159,7 +171,7 @@ export const TabButton = styled.button`
   border-radius: 4px 4px 0 0;
 `;
 
-// Formulários (Geral)
+// Formulários gerais
 export const FormSection = styled.div`
   background-color: #d9dde2;
   padding: 20px;
@@ -195,7 +207,7 @@ export const Checkbox = styled.div`
   }
 `;
 
-// Itens (para Composição, Itens de Compras e Vendas)
+// Composição
 export const CompositionContainer = styled.div`
   background-color: #d9dde2;
   padding: 20px;

@@ -18,16 +18,16 @@ import maquinarioIcon from '../../assets/maquinarioIcon.png';
 import relatorioIcon from '../../assets/relatorioIcon.png';
 
 // Itens com rotas associadas
-const items = [
-  { label: 'Sabores', icon: saboresIcon, route: '/sabores' },
+const items = [  
+  { label: 'Bebidas', icon: bebidasIcon, route: '/bebidas' },
   { label: 'Estoque', icon: estoqueIcon, route: '/estoque' },
   { label: 'Compras', icon: comprasIcon, route: '/compras' },
   { label: 'Vendas', icon: vendasIcon, route: '/vendas' },
+  { label: 'Produção', icon: saboresIcon, route: '/producao' },
   { label: 'Clientes', icon: clientesIcon, route: '/clienteslist' },
   { label: 'Fornecedores', icon: fornecedoresIcon, route: '/fornecedoreslist' },
   { label: 'Ingredientes', icon: ingredientesIcon, route: '/ingredientes' },
   { label: 'Utensílios', icon: utensiliosIcon, route: '/utensilios' },
-  { label: 'Bebidas', icon: bebidasIcon, route: '/bebidas' },
   { label: 'Maquinário', icon: maquinarioIcon, route: '/maquinariolist' },
   { label: 'Relatórios', icon: relatorioIcon, route: '/relatorio' },
 ];
