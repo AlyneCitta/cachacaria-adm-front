@@ -1,38 +1,43 @@
-✅ Boas Práticas Utilizadas
-Este projeto segue uma série de boas práticas de desenvolvimento front-end, visando organização, manutenibilidade e integração eficiente com o back-end e banco de dados. Abaixo estão os principais padrões adotados:
+# 🥃 Cachaçaria ADM - Front-End
 
-🔹 Organização de Arquivos e Componentes
-Estrutura de pastas modularizada, separando componentes reutilizáveis, páginas e serviços.
+Este repositório contém o código-fonte do **painel administrativo da Cachaçaria**, desenvolvido em **React + Vite**, com foco na gestão de clientes, fornecedores, estoque, produção, vendas, entre outros recursos.
 
-Separação clara entre lógica (.jsx) e estilização (.js ou .css), utilizando styled-components ou arquivos de estilo externos.
+O front-end se comunica com o back-end (Node.js/Express) hospedado na **Render**, e com o banco de dados **PostgreSQL** hospedado na **Railway**.
 
-🔹 Consumo de API
-Utilização da biblioteca axios com configuração centralizada de baseURL, integrando com o ambiente (VITE_API_URL).
+---
 
-Requisições HTTP bem estruturadas, com tratamento de erros e uso de async/await.
+## 🚀 Tecnologias Utilizadas
 
-Rotas protegidas com envio de token JWT via cabeçalho Authorization.
+- [React](https://reactjs.org/)
+- [Vite](https://vitejs.dev/)
+- [Axios](https://axios-http.com/)
+- [React Router DOM](https://reactrouter.com/)
+- [Styled-Components](https://styled-components.com/) ou CSS modular
+- [Vercel](https://vercel.com/) – Deploy do front-end
+- [Render](https://render.com/) – Deploy do back-end
+- [Railway](https://railway.app/) – Banco de dados PostgreSQL
 
-🔹 Integração com Backend
-Integração com o back-end hospedado na plataforma Render.
+---
 
-Comunicação com o banco de dados PostgreSQL hospedado na Railway por meio de rotas da API.
+## 📦 Instalação
 
-Separação entre rotas públicas e privadas no front.
+```bash
+# 1. Clone o repositório
+git clone https://github.com/AlyneCitta/cachacaria-adm-front.git
+cd cachacaria-adm-front
 
-🔹 Boas práticas de segurança e ambiente
-Uso de variáveis de ambiente (.env) para esconder URLs sensíveis e tokens.
+# 2. Instale as dependências
+npm install
 
-Exclusão de arquivos sensíveis via .gitignore, como .env.
+# 3. Crie um arquivo .env na raiz do projeto com o seguinte conteúdo
+VITE_API_URL=https://cachacaria-adm-back-ii0x.onrender.com
 
-🔹 Deploy e Hospedagem
-Deploy automatizado do front-end na Vercel, com integração contínua via GitHub.
+# 4. Rode o projeto localmente
+npm run dev
 
-Separação clara entre desenvolvimento local e produção, com URLs dinâmicas para APIs.
 
-🔹 Código Limpo
-Uso de funções bem nomeadas e componentes legíveis.
+🌐 Acesso em Produção
+Front-end (Vercel): https://cachacaria-adm-front.vercel.app
 
-Uso de useEffect e useState com dependências bem definidas.
+Back-end (Render): https://cachacaria-adm-back-ii0x.onrender.com
 
-Evita duplicações e mantém a lógica centralizada.
