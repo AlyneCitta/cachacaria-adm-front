@@ -46,33 +46,33 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const login = async (formData) => {
-        try {
-            const response = await api.post('/auth/login', formData);
+const login = async (formData) => {
+    try {
+        const response = await api.post('/api/auth/login', formData); // <-- rota ajustada
 
-            if (response.status >= 200 && response.status < 300) {
-                const { token, role } = response.data;
+        if (response.status >= 200 && response.status < 300) {
+            const { token, role } = response.data;
 
-                setTokenToStorage(token, role);
-                setUser({ role });
+            setTokenToStorage(token, role);
+            setUser({ role });
 
-                if (getTokenFromStorage()) {
-                    if (role === 'user') {
-                        navigate('/');
-                    } else {
-                        console.warn('Papel desconhecido:', role);
-                    }
+            if (getTokenFromStorage()) {
+                if (role === 'user') {
+                    navigate('/');
                 } else {
-                    console.error("Falha ao armazenar o token.");
+                    console.warn('Papel desconhecido:', role);
                 }
             } else {
-                alert('Erro durante o login.');
+                console.error("Falha ao armazenar o token.");
             }
-        } catch (error) {
-            console.error('Erro ao fazer login:', error);
-            alert('Erro ao fazer login. Verifique suas credenciais.');
+        } else {
+            alert('Erro durante o login.');
         }
-    };
+    } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        alert('Erro ao fazer login. Verifique suas credenciais.');
+    }
+};
 
     const logout = () => {
         removeTokenFromStorage();
