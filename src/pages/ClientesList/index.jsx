@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import api from '../../api/api';
 import {
   PageWrapper,
   PageContainer,
@@ -31,7 +32,7 @@ const ClientesList = () => {
 
   const fetchClientes = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/clientes');
+      const response = await api.get('/api/clientes');
       if (!response.ok) throw new Error('Erro ao buscar clientes');
       const data = await response.json();
       setClientes(data);
@@ -63,9 +64,7 @@ const ClientesList = () => {
     if (!confirmar) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/clientes/${id}`, {
-        method: 'DELETE'
-      });
+      const response = await api.delete(`/api/clientes/${id}`);
       if (response.ok) {
         alert('Cliente excluído com sucesso');
         fetchClientes();
@@ -77,11 +76,7 @@ const ClientesList = () => {
       alert('Erro ao excluir cliente: ' + error.message);
     }
   };
-
-  const handleView = (id) => {
-    navigate(`http://localhost:3001/api/clientes/view/${id}`);
-  };
-
+  
   const handleNew = () => {
     navigate('/clientesform');
   };
