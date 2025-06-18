@@ -33,9 +33,7 @@ const ClientesList = () => {
   const fetchClientes = async () => {
     try {
       const response = await api.get('/api/clientes');
-      if (!response.ok) throw new Error('Erro ao buscar clientes');
-      const data = await response.json();
-      setClientes(data);
+      setClientes(response.data);
     } catch (error) {
       alert('Erro ao carregar clientes: ' + error.message);
     }
@@ -64,19 +62,15 @@ const ClientesList = () => {
     if (!confirmar) return;
 
     try {
-      const response = await api.delete(`/api/clientes/${id}`);
-      if (response.ok) {
-        alert('Cliente excluído com sucesso');
-        fetchClientes();
-      } else {
-        const errorData = await response.json();
-        alert('Erro ao excluir cliente: ' + errorData.message);
-      }
+      await api.delete(`/api/clientes/${id}`);
+      alert('Cliente excluído com sucesso');
+      fetchClientes();
     } catch (error) {
-      alert('Erro ao excluir cliente: ' + error.message);
+      const errorMessage = error.response?.data?.message || error.message;
+      alert('Erro ao excluir cliente: ' + errorMessage);
     }
   };
-  
+
   const handleNew = () => {
     navigate('/clientesform');
   };
