@@ -47,12 +47,22 @@ export const AuthProvider = ({ children }) => {
     };
 
 const login = async (formData) => {
+    const { email, senha } = formData;
+
+    if (!email || !senha) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+    }
+
     try {
-        const response = await api.post('/auth/login', formData); // <-- rota ajustada
+        const response = await api.post("/auth/login", {
+            email,
+            senha,
+        });
 
-        if (response.status >= 200 && response.status < 300) {
-            const { token, role } = response.data;
+        const { token, role } = response.data;
 
+        if (token && role) {
             setTokenToStorage(token, role);
             setUser({ role });
 
@@ -66,11 +76,13 @@ const login = async (formData) => {
                 console.error("Falha ao armazenar o token.");
             }
         } else {
-            alert('Erro durante o login.');
+            alert("Resposta inválida do servidor. Dados de login não recebidos.");
         }
+
     } catch (error) {
-        console.error('Erro ao fazer login:', error);
-        alert('Erro ao fazer login. Verifique suas credenciais.');
+        console.error("Erro ao fazer login:", error);
+        const mensagem = error.response?.data?.error || "Erro ao conectar com o servidor.";
+        alert(mensagem);
     }
 };
 
