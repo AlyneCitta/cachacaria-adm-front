@@ -33,14 +33,13 @@ function Login() {
         }
 
         try {
-            // ENVIA email e senha corretamente
-            await login({ email, senha: password });
+            // ENVIA os campos corretos que o backend espera
+            await login({ email, password }); // <--- AQUI está o ajuste
             navigate('/home');
         } catch (error) {
             alert("Erro ao fazer login. Verifique suas credenciais.");
         }
     };
-
     return (
         <main style={styles.main}>
             <GlobalStyle />
