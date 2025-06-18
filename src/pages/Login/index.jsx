@@ -33,9 +33,8 @@ function Login() {
         }
 
         try {
-            // Se o seu login retorna uma Promise, aguarde aqui
-            await login({ email, password });
-            // Após login com sucesso, redirecione para home
+            // ENVIA email e senha corretamente
+            await login({ email, senha: password });
             navigate('/home');
         } catch (error) {
             alert("Erro ao fazer login. Verifique suas credenciais.");

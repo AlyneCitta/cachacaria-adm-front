@@ -47,22 +47,12 @@ export const AuthProvider = ({ children }) => {
     };
 
 const login = async (formData) => {
-    const { email, senha } = formData;
-
-    if (!email || !senha) {
-        alert("Por favor, preencha todos os campos.");
-        return;
-    }
-
     try {
-        const response = await api.post("/auth/login", {
-            email,
-            senha,
-        });
+        const response = await api.post('/auth/login', formData); // <-- rota ajustada
 
-        const { token, role } = response.data;
+        if (response.status >= 200 && response.status < 300) {
+            const { token, role } = response.data;
 
-        if (token && role) {
             setTokenToStorage(token, role);
             setUser({ role });
 
@@ -76,13 +66,11 @@ const login = async (formData) => {
                 console.error("Falha ao armazenar o token.");
             }
         } else {
-            alert("Resposta inválida do servidor. Dados de login não recebidos.");
+            alert('Erro durante o login.');
         }
-
     } catch (error) {
-        console.error("Erro ao fazer login:", error);
-        const mensagem = error.response?.data?.error || "Erro ao conectar com o servidor.";
-        alert(mensagem);
+        console.error('Erro ao fazer login:', error);
+        alert('Erro ao fazer login. Verifique suas credenciais.');
     }
 };
 
@@ -115,4 +103,4 @@ export const useAuth = () => {
     return context;
 };
 
-export default AuthContext;
+export default AuthContext;
