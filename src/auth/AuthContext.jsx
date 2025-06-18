@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
 
 const login = async (formData) => {
     try {
-        const response = await api.post('/api/auth/login', formData); // <-- rota ajustada
+        const response = await api.post('/auth/login', formData); // <-- rota ajustada
 
         if (response.status >= 200 && response.status < 300) {
             const { token, role } = response.data;
