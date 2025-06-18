@@ -3,7 +3,8 @@ import styles from "./styles.js";
 import EyeOpen from '../../assets/EyeOpen.png';
 import EyeClose from '../../assets/EyeClose.png';
 import GlobalStyle from "../../globalStyle/style.js";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import api from '../../api/api'; // <-- importação da instância da API
 
 function Register() {
     const [isShowPassword, setIsShowPassword] = useState(false);
@@ -11,6 +12,7 @@ function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const navigate = useNavigate();
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,27 +41,17 @@ function Register() {
         }
 
         try {
-            const response = await fetch("http://localhost:3001/api/users", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    email,
-                    senha: password,
-                }),
+            const response = await api.post("/api/users", {
+                email,
+                senha: password,
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                alert(data.error || "Erro ao cadastrar usuário.");
-            } else {
-                alert("Cadastro realizado com sucesso!");
-                // Exemplo: redirecionar para login se quiser
-                // navigate('/login');
-            }
+            alert("Cadastro realizado com sucesso!");
+            navigate('/login');
         } catch (error) {
             console.error("Erro ao se cadastrar:", error);
-            alert("Erro ao conectar com o servidor.");
+            const mensagem = error.response?.data?.error || "Erro ao conectar com o servidor.";
+            alert(mensagem);
         }
     };
 
