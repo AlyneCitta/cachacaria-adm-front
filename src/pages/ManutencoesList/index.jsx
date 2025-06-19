@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import api from '../../api/api';
 import {
   PageWrapper,
   PageContainer,
@@ -33,12 +34,17 @@ const ManutencoesList = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const fetchList = () => {
-    fetch(`http://localhost:3001/api/manutencoes?maquinario=${maquinaId}`)
-      .then(res => res.json())
-      .then(setManutencoes)
-      .catch(console.error);
+  const fetchList = async () => {
+    try {
+      const response = await api.get('/api/manutencoes', {
+        params: { maquinario: maquinaId }
+      });
+      setManutencoes(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar lista de manutenções:', error);
+    }
   };
+
 
   useEffect(fetchList, [maquinaId]);
 
@@ -48,17 +54,23 @@ const ManutencoesList = () => {
 
   const onDelete = async (id) => {
     if (!window.confirm('Deseja excluir esta manutenção?')) return;
-    const res = await fetch(`http://localhost:3001/api/manutencoes/${id}`, { method: 'DELETE' });
-    if (res.ok) fetchList();
-    else alert('Falha ao excluir');
+
+    try {
+      await api.delete(`/api/manutencoes/${id}`);
+      fetchList();
+    } catch (error) {
+      console.error('Erro ao excluir manutenção:', error);
+      alert('Falha ao excluir');
+    }
   };
+
 
   return (
     <>
       <Header />
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Home</span> &gt; 
+          <span onClick={() => navigate('/home')}>Home</span> &gt;
           <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
           <span> Manutenções</span>
         </Breadcrumb>
