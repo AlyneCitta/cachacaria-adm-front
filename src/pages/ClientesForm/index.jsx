@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import api from '../../api/api';
+import GlobalStyle from "../../globalStyle/style.js";
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   PageContainer,
@@ -12,6 +13,8 @@ import {
   Select,
   ButtonGroup,
   Button,
+  BreadcrumbWrapper,
+  Breadcrumb,
 } from './styles';
 
 const ClientesForm = () => {
@@ -187,156 +190,166 @@ const ClientesForm = () => {
 
   return (
     <>
+      <GlobalStyle />
       <Header />
-      <PageContainer>
-        <Form onSubmit={handleSubmit}>
-          <Label>Nome</Label>
-          <Input
-            name="nome"
-            value={formData.nome}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Data Nasc.</Label>
-          <Input
-            type="date"
-            name="dtanascimento"
-            value={formData.dtanascimento}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Email</Label>
-          <Input
-            type="email"
-            name="emailcontato"
-            value={formData.emailcontato}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Telefone</Label>
-          <Input
-            name="telefone"
-            value={formData.telefone}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>CEP</Label>
-          <Input
-            name="cep"
-            value={formData.cep}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Logradouro</Label>
-          <Input
-            name="logradouro"
-            value={formData.logradouro}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Número</Label>
-          <Input
-            name="numero"
-            value={formData.numero}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Complemento</Label>
-          <Input
-            name="complemento"
-            value={formData.complemento}
-            onChange={handleChange}
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Estado</Label>
-          {isViewMode ? (
+      <main>
+        <BreadcrumbWrapper>
+          <Breadcrumb>
+            <span onClick={() => navigate('/home')}>Principal</span> &gt;
+            <span onClick={() => navigate('/clienteslist')}> Clientes</span> &gt;
+            <span> {id && isViewMode ? ' Visualizar Cliente' : id ? ' Editar Cliente' : ' Cadastrar Cliente'}</span>
+          </Breadcrumb>
+        </BreadcrumbWrapper>
+        <PageContainer>
+          <Form onSubmit={handleSubmit}>
+            <Label>Nome</Label>
             <Input
-              readOnly
-              value={
-                estados.length > 0
-                  ? estados.find(estado => estado.id.toString() === formData.idf_estado.toString())?.nome || ''
-                  : ''
-              }
-              className="visualizacao"
-            />
-          ) : (
-            <Select
-              name="idf_estado"
-              value={formData.idf_estado}
+              name="nome"
+              value={formData.nome}
               onChange={handleChange}
               required
-            >
-              <option value="">Selecione o estado</option>
-              {estados.map(estado => (
-                <option key={estado.id} value={estado.id}>{estado.nome}</option>
-              ))}
-            </Select>
-          )}
-
-          <Label>Cidade</Label>
-          {isViewMode ? (
-            <Input
-              readOnly
-              value={
-                cidades.find(cidade => cidade.id.toString() === formData.idf_cidade.toString())?.nome || ''
-              }
-              className="visualizacao"
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
             />
-          ) : (
-            <Select
-              name="idf_cidade"
-              value={formData.idf_cidade}
+
+            <Label>Data Nasc.</Label>
+            <Input
+              type="date"
+              name="dtanascimento"
+              value={formData.dtanascimento}
               onChange={handleChange}
               required
-            >
-              <option value="">Selecione a cidade</option>
-              {cidades.map(cidade => (
-                <option key={cidade.id} value={cidade.id}>{cidade.nome}</option>
-              ))}
-            </Select>
-          )}
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
 
-          <Label>CPF/CNPJ</Label>
-          <Input
-            name="cpfcnpj"
-            value={formData.cpfcnpj}
-            onChange={handleChange}
-            required
-            maxLength={14}
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
+            <Label>Email</Label>
+            <Input
+              type="email"
+              name="emailcontato"
+              value={formData.emailcontato}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>Telefone</Label>
+            <Input
+              name="telefone"
+              value={formData.telefone}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>CEP</Label>
+            <Input
+              name="cep"
+              value={formData.cep}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>Logradouro</Label>
+            <Input
+              name="logradouro"
+              value={formData.logradouro}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>Número</Label>
+            <Input
+              name="numero"
+              value={formData.numero}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>Complemento</Label>
+            <Input
+              name="complemento"
+              value={formData.complemento}
+              onChange={handleChange}
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>Estado</Label>
+            {isViewMode ? (
+              <Input
+                readOnly
+                value={
+                  estados.length > 0
+                    ? estados.find(estado => estado.id.toString() === formData.idf_estado.toString())?.nome || ''
+                    : ''
+                }
+                className="visualizacao"
+              />
+            ) : (
+              <Select
+                name="idf_estado"
+                value={formData.idf_estado}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione o estado</option>
+                {estados.map(estado => (
+                  <option key={estado.id} value={estado.id}>{estado.nome}</option>
+                ))}
+              </Select>
+            )}
+
+            <Label>Cidade</Label>
+            {isViewMode ? (
+              <Input
+                readOnly
+                value={
+                  cidades.find(cidade => cidade.id.toString() === formData.idf_cidade.toString())?.nome || ''
+                }
+                className="visualizacao"
+              />
+            ) : (
+              <Select
+                name="idf_cidade"
+                value={formData.idf_cidade}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione a cidade</option>
+                {cidades.map(cidade => (
+                  <option key={cidade.id} value={cidade.id}>{cidade.nome}</option>
+                ))}
+              </Select>
+            )}
+
+            <Label>CPF/CNPJ</Label>
+            <Input
+              name="cpfcnpj"
+              value={formData.cpfcnpj}
+              onChange={handleChange}
+              required
+              maxLength={14}
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
 
 
-          <ButtonGroup>
-            <Button type="button" onClick={() => navigate('/clienteslist')} className="secondary">Voltar</Button>
-            {!isViewMode && <Button type="submit">Salvar</Button>}
-          </ButtonGroup>
-        </Form>
-      </PageContainer>
+            <ButtonGroup>
+              <Button type="button" onClick={() => navigate('/clienteslist')} className="secondary">Voltar</Button>
+              {!isViewMode && <Button type="submit">Salvar</Button>}
+            </ButtonGroup>
+          </Form>
+        </PageContainer>
+      </main>
       <Footer />
     </>
   );

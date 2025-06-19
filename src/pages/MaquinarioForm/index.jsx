@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import GlobalStyle from "../../globalStyle/style.js";
 import api from '../../api/api';
 import dayjs from 'dayjs';
 import {
@@ -80,33 +81,36 @@ const MaquinarioForm = () => {
 
   return (
     <>
+      <GlobalStyle />
       <Header />
-      <BreadcrumbWrapper>
-        <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Home</span> &gt;
-          <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
-          <span>{id ? 'Editar Maquinário' : 'Cadastro de Maquinário'}</span>
-        </Breadcrumb>
-      </BreadcrumbWrapper>
-      <PageWrapper>
-        <PageContainer>
-          <Title>{id ? ' Editar Maquinário' : ' Cadastro de Maquinário'}</Title>
-          <Form onSubmit={handleSubmit}>
-            <Label>Nome:</Label>
-            <Input name="nome" value={formData.nome} onChange={handleChange} required />
+      <main>
+        <BreadcrumbWrapper>
+          <Breadcrumb>
+            <span onClick={() => navigate('/home')}>Principal</span> &gt;
+            <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
+            <span>{id ? ' Editar Maquinário' : ' Cadastro de Maquinário'}</span>
+          </Breadcrumb>
+        </BreadcrumbWrapper>
+        <PageWrapper>
+          <PageContainer>
+            <Title>{id ? ' Editar Maquinário' : ' Cadastro de Maquinário'}</Title>
+            <Form onSubmit={handleSubmit}>
+              <Label>Nome:</Label>
+              <Input name="nome" value={formData.nome} onChange={handleChange} required />
 
-            <Label>Data de Aquisição:</Label>
-            <Input type="date" name="aquisicao" value={formData.aquisicao} onChange={handleChange} required />
+              <Label>Data de Aquisição:</Label>
+              <Input type="date" name="aquisicao" value={formData.aquisicao} onChange={handleChange} required />
 
-            <ButtonGroup>
-              <CancelButton type="button" onClick={() => navigate('/maquinariolist')}>
-                Voltar
-              </CancelButton>
-              <Button type="submit">{id ? 'Atualizar' : 'Salvar'}</Button>
-            </ButtonGroup>
-          </Form>
-        </PageContainer>
-      </PageWrapper>
+              <ButtonGroup>
+                <CancelButton type="button" onClick={() => navigate('/maquinariolist')}>
+                  Voltar
+                </CancelButton>
+                <Button type="submit">{id ? 'Atualizar' : 'Salvar'}</Button>
+              </ButtonGroup>
+            </Form>
+          </PageContainer>
+        </PageWrapper>
+      </main>
       <Footer />
     </>
   );

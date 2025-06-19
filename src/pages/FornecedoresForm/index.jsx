@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import GlobalStyle from "../../globalStyle/style.js";
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import api from '../../api/api';
 import {
@@ -12,6 +13,8 @@ import {
   Select,
   ButtonGroup,
   Button,
+  BreadcrumbWrapper,
+  Breadcrumb,
 } from './styles';
 
 const FornecedoresForm = () => {
@@ -140,190 +143,197 @@ const FornecedoresForm = () => {
     }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!formData.idf_cidade) {
-    alert('Por favor, selecione uma cidade.');
-    return;
-  }
-
-  const token = localStorage.getItem('token');
-  try {
-    const { cnpj, email, ...rest } = formData;
-
-    const dataToSend = {
-      ...rest,
-      cpfcnpj: cnpj,
-      emailcontato: email,
-      fornecedor: true,
-      cliente: false,
-    };
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    };
-
-    if (id) {
-      await api.put(`/api/fornecedores/${id}`, dataToSend, config);
-    } else {
-      await api.post('/api/fornecedores', dataToSend, config);
+    if (!formData.idf_cidade) {
+      alert('Por favor, selecione uma cidade.');
+      return;
     }
 
-    alert('Fornecedor salvo com sucesso!');
-    navigate('/fornecedoreslist');
-  } catch (error) {
-    console.error("Erro ao salvar fornecedor:", error);
-    const mensagem = error.response?.data?.error || error.message || 'Erro ao conectar com o servidor.';
-    alert(`Erro: ${mensagem}`);
-  }
-};
+    const token = localStorage.getItem('token');
+    try {
+      const { cnpj, email, ...rest } = formData;
+
+      const dataToSend = {
+        ...rest,
+        cpfcnpj: cnpj,
+        emailcontato: email,
+        fornecedor: true,
+        cliente: false,
+      };
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      };
+
+      if (id) {
+        await api.put(`/api/fornecedores/${id}`, dataToSend, config);
+      } else {
+        await api.post('/api/fornecedores', dataToSend, config);
+      }
+
+      alert('Fornecedor salvo com sucesso!');
+      navigate('/fornecedoreslist');
+    } catch (error) {
+      console.error("Erro ao salvar fornecedor:", error);
+      const mensagem = error.response?.data?.error || error.message || 'Erro ao conectar com o servidor.';
+      alert(`Erro: ${mensagem}`);
+    }
+  };
 
 
   return (
     <>
+      <GlobalStyle />
       <Header />
-      <PageContainer>
-        <Form onSubmit={handleSubmit}>
-          <Label>Nome</Label>
-          <Input
-            name="nome"
-            value={formData.nome}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>CNPJ</Label>
-          <Input
-            name="cnpj"
-            value={formData.cnpj}
-            onChange={handleChange}
-            required
-            maxLength={18}
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Email</Label>
-          <Input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Telefone</Label>
-          <Input
-            name="telefone"
-            value={formData.telefone}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>CEP</Label>
-          <Input
-            name="cep"
-            value={formData.cep}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Logradouro</Label>
-          <Input
-            name="logradouro"
-            value={formData.logradouro}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Número</Label>
-          <Input
-            name="numero"
-            value={formData.numero}
-            onChange={handleChange}
-            required
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Complemento</Label>
-          <Input
-            name="complemento"
-            value={formData.complemento}
-            onChange={handleChange}
-            readOnly={isViewMode}
-            className={isViewMode ? 'visualizacao' : ''}
-          />
-
-          <Label>Estado</Label>
-          {isViewMode ? (
+      <main>
+        <BreadcrumbWrapper>
+          <Breadcrumb>
+            <span onClick={() => navigate('/home')}>Principal</span> &gt;
+            <span onClick={() => navigate('/fornecedoreslist')}> Fornecedores</span> &gt;
+            <span> {id && isViewMode ? ' Visualizar Fornecedor' : id ? ' Editar Fornecedor' : ' Cadastrar Fornecedor'}</span>
+          </Breadcrumb>
+        </BreadcrumbWrapper>
+        <PageContainer>
+          <Form onSubmit={handleSubmit}>
+            <Label>Nome</Label>
             <Input
-              readOnly
-              value={
-                estados.length > 0
-                  ? estados.find(estado => estado.id.toString() === formData.idf_estado.toString())?.nome || ''
-                  : ''
-              }
-              className="visualizacao"
-            />
-          ) : (
-            <Select
-              name="idf_estado"
-              value={formData.idf_estado}
+              name="nome"
+              value={formData.nome}
               onChange={handleChange}
               required
-            >
-              <option value="">Selecione o estado</option>
-              {estados.map(estado => (
-                <option key={estado.id} value={estado.id}>{estado.nome}</option>
-              ))}
-            </Select>
-          )}
-
-          <Label>Cidade</Label>
-          {isViewMode ? (
-            <Input
-              readOnly
-              value={
-                cidades.find(cidade => cidade.id.toString() === formData.idf_cidade.toString())?.nome || ''
-              }
-              className="visualizacao"
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
             />
-          ) : (
-            <Select
-              name="idf_cidade"
-              value={formData.idf_cidade}
+
+            <Label>CNPJ</Label>
+            <Input
+              name="cnpj"
+              value={formData.cnpj}
               onChange={handleChange}
               required
-            >
-              <option value="">Selecione a cidade</option>
-              {cidades.map(cidade => (
-                <option key={cidade.id} value={cidade.id}>{cidade.nome}</option>
-              ))}
-            </Select>
-          )}
+              maxLength={18}
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
 
+            <Label>Email</Label>
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
 
+            <Label>Telefone</Label>
+            <Input
+              name="telefone"
+              value={formData.telefone}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
 
-          <ButtonGroup>
-            <Button type="button" onClick={() => navigate('/fornecedoreslist')} className="secondary">Voltar</Button>
-            {!isViewMode && <Button type="submit">Salvar</Button>}
-          </ButtonGroup>
-        </Form>
-      </PageContainer>
+            <Label>CEP</Label>
+            <Input
+              name="cep"
+              value={formData.cep}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>Logradouro</Label>
+            <Input
+              name="logradouro"
+              value={formData.logradouro}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>Número</Label>
+            <Input
+              name="numero"
+              value={formData.numero}
+              onChange={handleChange}
+              required
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>Complemento</Label>
+            <Input
+              name="complemento"
+              value={formData.complemento}
+              onChange={handleChange}
+              readOnly={isViewMode}
+              className={isViewMode ? 'visualizacao' : ''}
+            />
+
+            <Label>Estado</Label>
+            {isViewMode ? (
+              <Input
+                readOnly
+                value={
+                  estados.length > 0
+                    ? estados.find(estado => estado.id.toString() === formData.idf_estado.toString())?.nome || ''
+                    : ''
+                }
+                className="visualizacao"
+              />
+            ) : (
+              <Select
+                name="idf_estado"
+                value={formData.idf_estado}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione o estado</option>
+                {estados.map(estado => (
+                  <option key={estado.id} value={estado.id}>{estado.nome}</option>
+                ))}
+              </Select>
+            )}
+
+            <Label>Cidade</Label>
+            {isViewMode ? (
+              <Input
+                readOnly
+                value={
+                  cidades.find(cidade => cidade.id.toString() === formData.idf_cidade.toString())?.nome || ''
+                }
+                className="visualizacao"
+              />
+            ) : (
+              <Select
+                name="idf_cidade"
+                value={formData.idf_cidade}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione a cidade</option>
+                {cidades.map(cidade => (
+                  <option key={cidade.id} value={cidade.id}>{cidade.nome}</option>
+                ))}
+              </Select>
+            )}
+            <ButtonGroup>
+              <Button type="button" onClick={() => navigate('/fornecedoreslist')} className="secondary">Voltar</Button>
+              {!isViewMode && <Button type="submit">Salvar</Button>}
+            </ButtonGroup>
+          </Form>
+        </PageContainer>
+      </main>
       <Footer />
     </>
   );

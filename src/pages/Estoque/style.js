@@ -18,17 +18,21 @@ export const Title = styled.h1`
 `;
 
 export const BreadcrumbWrapper = styled.div`
-  background-color: #f1f1f1;
-  padding: 10px 20px;
+  padding: 20px 30px 0 30px;
 `;
 
 export const Breadcrumb = styled.div`
-  font-size: 14px;
-  color: #333;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: #666;
 
   span {
     cursor: pointer;
-    color: #007bff;
+    color: rgba(0, 0, 0, 0.5);
+
+    &:hover {
+      color: #0056b3;
+    }
   }
 `;
 

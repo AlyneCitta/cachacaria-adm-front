@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import GlobalStyle from "../../globalStyle/style.js";
 import api from '../../api/api';
 import {
   PageWrapper,
@@ -123,59 +124,62 @@ const ManutencoesForm = () => {
 
   return (
     <>
+      <GlobalStyle />
       <Header />
-      <BreadcrumbWrapper>
-        <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Home</span> &gt;
-          <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
-          <span onClick={() => navigate(`/manutencoeslist?maquinario=${maquinarioId}`)}> Manutenções</span> &gt;
-          <span>{manutencaoId ? 'Editar' : 'Nova'} Manutenção</span>
-        </Breadcrumb>
-      </BreadcrumbWrapper>
-      <PageWrapper>
-        <PageContainer>
-          <Title>{manutencaoId ? 'Editar' : 'Inserir'} Manutenção</Title>
-          <Form onSubmit={handleSubmit}>
-            <Label>Data:</Label>
-            <Input type="date" name="data" value={formData.data} onChange={handleChange} required />
+      <main>
+        <BreadcrumbWrapper>
+          <Breadcrumb>
+            <span onClick={() => navigate('/home')}>Principal</span> &gt;
+            <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
+            <span onClick={() => navigate(`/manutencoeslist?maquinario=${maquinarioId}`)}> Manutenções</span> &gt;
+            <span>{manutencaoId ? ' Editar' : ' Nova'} Manutenção</span>
+          </Breadcrumb>
+        </BreadcrumbWrapper>
+        <PageWrapper>
+          <PageContainer>
+            <Title>{manutencaoId ? 'Editar' : 'Inserir'} Manutenção</Title>
+            <Form onSubmit={handleSubmit}>
+              <Label>Data:</Label>
+              <Input type="date" name="data" value={formData.data} onChange={handleChange} required />
 
-            <Label>Tipo:</Label>
-            <Select name="tipo" value={formData.tipo} onChange={handleChange} required>
-              <option value="">Selecione um tipo</option>
-              {tiposManutencao.map(tipo => (
-                <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
-              ))}
-            </Select>
+              <Label>Tipo:</Label>
+              <Select name="tipo" value={formData.tipo} onChange={handleChange} required>
+                <option value="">Selecione um tipo</option>
+                {tiposManutencao.map(tipo => (
+                  <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
+                ))}
+              </Select>
 
-            <Label>Descrição:</Label>
-            <TextArea name="descricao" value={formData.descricao} onChange={handleChange} required />
+              <Label>Descrição:</Label>
+              <TextArea name="descricao" value={formData.descricao} onChange={handleChange} required />
 
-            <Label>Responsável:</Label>
-            <Select name="responsavel" value={formData.responsavel} onChange={handleChange} required>
-              <option value="">Selecione um responsável</option>
-              {usuarios.map(user => (
-                <option key={user.id} value={user.id}>{user.nome || user.email}</option>
-              ))}
-            </Select>
+              <Label>Responsável:</Label>
+              <Select name="responsavel" value={formData.responsavel} onChange={handleChange} required>
+                <option value="">Selecione um responsável</option>
+                {usuarios.map(user => (
+                  <option key={user.id} value={user.id}>{user.nome || user.email}</option>
+                ))}
+              </Select>
 
-            <Label>Custo:</Label>
-            <Input type="number" step="0.01" name="custo" value={formData.custo} onChange={handleChange} required />
+              <Label>Custo:</Label>
+              <Input type="number" step="0.01" name="custo" value={formData.custo} onChange={handleChange} required />
 
-            <Label>Próxima Manutenção:</Label>
-            <Input type="date" name="proxima" value={formData.proxima} onChange={handleChange} />
+              <Label>Próxima Manutenção:</Label>
+              <Input type="date" name="proxima" value={formData.proxima} onChange={handleChange} />
 
-            <Label>Observações:</Label>
-            <TextArea name="observacoes" value={formData.observacoes} onChange={handleChange} />
+              <Label>Observações:</Label>
+              <TextArea name="observacoes" value={formData.observacoes} onChange={handleChange} />
 
-            <ButtonGroup>
-              <CancelButton type="button" onClick={() => navigate(`/manutencoeslist?maquinario=${maquinarioId}`)}>
-                Voltar
-              </CancelButton>
-              <Button type="submit">Salvar</Button>
-            </ButtonGroup>
-          </Form>
-        </PageContainer>
-      </PageWrapper>
+              <ButtonGroup>
+                <CancelButton type="button" onClick={() => navigate(`/manutencoeslist?maquinario=${maquinarioId}`)}>
+                  Voltar
+                </CancelButton>
+                <Button type="submit">Salvar</Button>
+              </ButtonGroup>
+            </Form>
+          </PageContainer>
+        </PageWrapper>
+      </main>
       <Footer />
     </>
   );

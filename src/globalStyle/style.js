@@ -9,22 +9,30 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  html, body {
+  html, body, #root {
     width: 100%;
     height: 100%;
     font-family: Arial, sans-serif;
     background-color: #eee5e9;
+  }  
+
+  body {
+    display: flex;
+    flex-direction: column;
   }
 
-  #root {
-    width: 100%;
-    height: 100%;
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;    
+    min-height: 80vh;
   }
 
   img {
     max-width: 100%;
     height: auto;
   }
+
 `;
 
 export default GlobalStyle;

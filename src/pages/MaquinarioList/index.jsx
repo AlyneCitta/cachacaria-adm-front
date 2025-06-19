@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import axios from 'axios';
+import GlobalStyle from "../../globalStyle/style.js";
 import api from '../../api/api';
 import dayjs from 'dayjs';
 import {
@@ -70,47 +70,50 @@ const MaquinarioList = () => {
 
   return (
     <>
+      <GlobalStyle />
       <Header />
-      <BreadcrumbWrapper>
-        <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Home</span> &gt; <span>Maquinários</span>
-        </Breadcrumb>
-      </BreadcrumbWrapper>
-      <PageWrapper>
-        <PageContainer>
-          <Title>Maquinários</Title>
+      <main>
+        <BreadcrumbWrapper>
+          <Breadcrumb>
+            <span onClick={() => navigate('/home')}>Principal</span> &gt; <span>Maquinários</span>
+          </Breadcrumb>
+        </BreadcrumbWrapper>
+        <PageWrapper>
+          <PageContainer>
+            <Title>Maquinários</Title>
 
-          <TopActions>
-            <BackButton onClick={() => navigate('/home')}>Voltar</BackButton>
-            <NewButton onClick={handleNew}>Novo Maquinário</NewButton>
-          </TopActions>
+            <TopActions>
+              <BackButton onClick={() => navigate('/home')}>Voltar</BackButton>
+              <NewButton onClick={handleNew}>Novo Maquinário</NewButton>
+            </TopActions>
 
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Nome</Th>
-                <Th>Data de Aquisição</Th>
-                <Th>Ações</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {maquinarios.map((item) => (
-                <Tr key={item.id}>
-                  <Td>{item.nome}</Td>
-                  <Td>{dayjs(item.dataaquisicao).format('DD/MM/YYYY')}</Td>
-                  <Td>
-                    <Actions>
-                      <ViewButton onClick={() => navigate(`/manutencoeslist?maquinario=${item.id}`)}>Manutenções</ViewButton>
-                      <EditButton onClick={() => handleEdit(item.id)}>Editar</EditButton>
-                      <DeleteButton onClick={() => handleDelete(item.id)}>Excluir</DeleteButton>
-                    </Actions>
-                  </Td>
+            <Table>
+              <Thead>
+                <Tr>
+                  <Th>Nome</Th>
+                  <Th>Data de Aquisição</Th>
+                  <Th>Ações</Th>
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </PageContainer>
-      </PageWrapper>
+              </Thead>
+              <Tbody>
+                {maquinarios.map((item) => (
+                  <Tr key={item.id}>
+                    <Td>{item.nome}</Td>
+                    <Td>{dayjs(item.dataaquisicao).format('DD/MM/YYYY')}</Td>
+                    <Td>
+                      <Actions>
+                        <ViewButton onClick={() => navigate(`/manutencoeslist?maquinario=${item.id}`)}>Manutenções</ViewButton>
+                        <EditButton onClick={() => handleEdit(item.id)}>Editar</EditButton>
+                        <DeleteButton onClick={() => handleDelete(item.id)}>Excluir</DeleteButton>
+                      </Actions>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </PageContainer>
+        </PageWrapper>
+      </main>
       <Footer />
     </>
   );

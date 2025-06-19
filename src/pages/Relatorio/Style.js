@@ -67,3 +67,21 @@ export const Wrapper = styled.div`
   min-height: 100vh;
 `;
 
+export const BreadcrumbWrapper = styled.div`
+  padding: 20px 30px 0 30px;
+`;
+
+export const Breadcrumb = styled.div`
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: #666;
+
+  span {
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.5);
+
+    &:hover {
+      color: #0056b3;
+    }
+  }
+`;

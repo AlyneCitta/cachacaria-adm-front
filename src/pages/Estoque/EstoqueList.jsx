@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import GlobalStyle from "../../globalStyle/style.js";
 import {
   PageWrapper,
   PageContainer,
@@ -74,105 +75,107 @@ const EstoqueList = () => {
 
   return (
     <>
+      <GlobalStyle />
       <Header />
-      <BreadcrumbWrapper>
-        <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Principal</span> &gt; Estoque
-        </Breadcrumb>
-      </BreadcrumbWrapper>
+      <main>
+        <BreadcrumbWrapper>
+          <Breadcrumb>
+            <span onClick={() => navigate('/home')}>Principal</span> &gt; <span onClick={() => navigate('/etoquelist')}>Estoque</span>
+          </Breadcrumb>
+        </BreadcrumbWrapper>
 
-      <PageWrapper>
-        <PageContainer>
-          <Title>Estoque</Title>
+        <PageWrapper>
+          <PageContainer>
+            <Title>Estoque</Title>
 
-          <TopActions>
-            <BackButton onClick={() => navigate('/home')}>Voltar</BackButton>
-          </TopActions>
+            <TopActions>
+              <BackButton onClick={() => navigate('/home')}>Voltar</BackButton>
+            </TopActions>
 
-          <ContentWrapper>
-            <TableWrapper>
-              <Table>
-                <Thead>
-                  <Tr>
-                    <Th>Código</Th>
-                    <Th>Descrição</Th>
-                    <Th>Ativo</Th>
-                    <Th>Tem Composição</Th>
-                    <Th>Preço</Th>
-                    <Th>Capacidade (ml)</Th>
-                    <Th>Custo</Th>
-                    <Th>Estoque Mínimo</Th>
-                    <Th>Código EAN</Th>
-                    <Th>Código Barras</Th>
-                    <Th>Data Cadastro</Th>
-                    <Th>Data Alteração</Th>
-                    <Th>Categoria</Th>
-                    <Th>Sabor</Th>
-                    <Th>Unidade</Th>
-                    <Th>Ações</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {filteredEstoque.map((item) => (
-                    <Tr key={item.id_produto}>
-                      <Td>{item.codigo}</Td>
-                      <Td>{item.descricao}</Td>
-                      <Td>{item.ativo ? 'Sim' : 'Não'}</Td>
-                      <Td>{item.temcomposicao ? 'Sim' : 'Não'}</Td>
-                      <Td>{formatCurrency(item.preco)}</Td>
-                      <Td>{item.capacidade_ml}</Td>
-                      <Td>{formatCurrency(item.custo)}</Td>
-                      <Td>{item.estoqueminimo}</Td>
-                      <Td>{item.codigoean}</Td>
-                      <Td>{item.codigobarras}</Td>
-                      <Td>{formatDate(item.dtacadastro)}</Td>
-                      <Td>{formatDate(item.dtaalteracao)}</Td>
-                      <Td>{item.categoria}</Td>
-                      <Td>{item.sabor}</Td>
-                      <Td>{item.unidade}</Td>
-                      <Td>
-                        <Actions>
-                          <EditButton onClick={() => handleEdit(item.id_produto)}>Visualizar</EditButton>
-                        </Actions>
-                      </Td>
+            <ContentWrapper>
+              <TableWrapper>
+                <Table>
+                  <Thead>
+                    <Tr>
+                      <Th>Código</Th>
+                      <Th>Descrição</Th>
+                      <Th>Ativo</Th>
+                      <Th>Tem Composição</Th>
+                      <Th>Preço</Th>
+                      <Th>Capacidade (ml)</Th>
+                      <Th>Custo</Th>
+                      <Th>Estoque Mínimo</Th>
+                      <Th>Código EAN</Th>
+                      <Th>Código Barras</Th>
+                      <Th>Data Cadastro</Th>
+                      <Th>Data Alteração</Th>
+                      <Th>Categoria</Th>
+                      <Th>Sabor</Th>
+                      <Th>Unidade</Th>
+                      <Th>Ações</Th>
                     </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableWrapper>
+                  </Thead>
+                  <Tbody>
+                    {filteredEstoque.map((item) => (
+                      <Tr key={item.id_produto}>
+                        <Td>{item.codigo}</Td>
+                        <Td>{item.descricao}</Td>
+                        <Td>{item.ativo ? 'Sim' : 'Não'}</Td>
+                        <Td>{item.temcomposicao ? 'Sim' : 'Não'}</Td>
+                        <Td>{formatCurrency(item.preco)}</Td>
+                        <Td>{item.capacidade_ml}</Td>
+                        <Td>{formatCurrency(item.custo)}</Td>
+                        <Td>{item.estoqueminimo}</Td>
+                        <Td>{item.codigoean}</Td>
+                        <Td>{item.codigobarras}</Td>
+                        <Td>{formatDate(item.dtacadastro)}</Td>
+                        <Td>{formatDate(item.dtaalteracao)}</Td>
+                        <Td>{item.categoria}</Td>
+                        <Td>{item.sabor}</Td>
+                        <Td>{item.unidade}</Td>
+                        <Td>
+                          <Actions>
+                            <EditButton onClick={() => handleEdit(item.id_produto)}>Visualizar</EditButton>
+                          </Actions>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableWrapper>
 
-            <FilterContainer>
-              <FilterTitle>Filtros</FilterTitle>
-              <FilterInput
-                placeholder="Código"
-                value={filters.codigo}
-                onChange={(e) => setFilters({ ...filters, codigo: e.target.value })}
-              />
-              <FilterInput
-                placeholder="Descrição"
-                value={filters.descricao}
-                onChange={(e) => setFilters({ ...filters, descricao: e.target.value })}
-              />
-              <FilterInput
-                placeholder="Categoria"
-                value={filters.categoria}
-                onChange={(e) => setFilters({ ...filters, categoria: e.target.value })}
-              />
-              <FilterInput
-                placeholder="Sabor"
-                value={filters.sabor}
-                onChange={(e) => setFilters({ ...filters, sabor: e.target.value })}
-              />
-              <FilterInput
-                placeholder="Unidade"
-                value={filters.unidade}
-                onChange={(e) => setFilters({ ...filters, unidade: e.target.value })}
-              />
-            </FilterContainer>
-          </ContentWrapper>
-        </PageContainer>
-      </PageWrapper>
-
+              <FilterContainer>
+                <FilterTitle>Filtros</FilterTitle>
+                <FilterInput
+                  placeholder="Código"
+                  value={filters.codigo}
+                  onChange={(e) => setFilters({ ...filters, codigo: e.target.value })}
+                />
+                <FilterInput
+                  placeholder="Descrição"
+                  value={filters.descricao}
+                  onChange={(e) => setFilters({ ...filters, descricao: e.target.value })}
+                />
+                <FilterInput
+                  placeholder="Categoria"
+                  value={filters.categoria}
+                  onChange={(e) => setFilters({ ...filters, categoria: e.target.value })}
+                />
+                <FilterInput
+                  placeholder="Sabor"
+                  value={filters.sabor}
+                  onChange={(e) => setFilters({ ...filters, sabor: e.target.value })}
+                />
+                <FilterInput
+                  placeholder="Unidade"
+                  value={filters.unidade}
+                  onChange={(e) => setFilters({ ...filters, unidade: e.target.value })}
+                />
+              </FilterContainer>
+            </ContentWrapper>
+          </PageContainer>
+        </PageWrapper>
+      </main>
       <Footer />
     </>
   );

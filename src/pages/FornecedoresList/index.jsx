@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import GlobalStyle from "../../globalStyle/style.js";
 import api from '../../api/api';
 import {
   PageWrapper,
@@ -90,58 +91,61 @@ const FornecedoresList = () => {
 
   return (
     <>
-      <Header />
-      <BreadcrumbWrapper>
-        <Breadcrumb>
-          <span onClick={goToHome}>Home</span> &gt; <span onClick={goToFornecedores}>Fornecedores</span>
-        </Breadcrumb>
-      </BreadcrumbWrapper>
-      <PageWrapper>
-        <PageContainer>
-          <Title>Lista de Fornecedores</Title>
+      <GlobalStyle />
+      <main>
+        <Header />
+        <BreadcrumbWrapper>
+          <Breadcrumb>
+            <span onClick={goToHome}>Principal</span> &gt; <span onClick={goToFornecedores}>Fornecedores</span>
+          </Breadcrumb>
+        </BreadcrumbWrapper>
+        <PageWrapper>
+          <PageContainer>
+            <Title>Lista de Fornecedores</Title>
 
-          <TopActions>
-            <BackButton onClick={handleBack}>Voltar</BackButton>
-            <NewButton onClick={handleNew}>Novo Fornecedor</NewButton>
-          </TopActions>
+            <TopActions>
+              <BackButton onClick={handleBack}>Voltar</BackButton>
+              <NewButton onClick={handleNew}>Novo Fornecedor</NewButton>
+            </TopActions>
 
-          <SearchInput
-            type="text"
-            placeholder="Pesquisar por nome..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+            <SearchInput
+              type="text"
+              placeholder="Pesquisar por nome..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
 
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Nome</Th>
-                <Th>CNPJ</Th>
-                <Th>Email</Th>
-                <Th>Telefone</Th>
-                <Th>Ações</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {filteredFornecedores.map((fornecedor) => (
-                <Tr key={fornecedor.id}>
-                  <Td>{fornecedor.nome}</Td>
-                  <Td>{fornecedor.cpfcnpj}</Td>
-                  <Td>{fornecedor.emailcontato || fornecedor.email}</Td>
-                  <Td>{fornecedor.telefone}</Td>
-                  <Td>
-                    <Actions>
-                      <ViewButton onClick={() => handleView(fornecedor.id)}>Visualizar</ViewButton>
-                      <EditButton onClick={() => handleEdit(fornecedor.id)}>Editar</EditButton>
-                      <DeleteButton onClick={() => handleDelete(fornecedor.id)}>Excluir</DeleteButton>
-                    </Actions>
-                  </Td>
+            <Table>
+              <Thead>
+                <Tr>
+                  <Th>Nome</Th>
+                  <Th>CNPJ</Th>
+                  <Th>Email</Th>
+                  <Th>Telefone</Th>
+                  <Th>Ações</Th>
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </PageContainer>
-      </PageWrapper>
+              </Thead>
+              <Tbody>
+                {filteredFornecedores.map((fornecedor) => (
+                  <Tr key={fornecedor.id}>
+                    <Td>{fornecedor.nome}</Td>
+                    <Td>{fornecedor.cpfcnpj}</Td>
+                    <Td>{fornecedor.emailcontato || fornecedor.email}</Td>
+                    <Td>{fornecedor.telefone}</Td>
+                    <Td>
+                      <Actions>
+                        <ViewButton onClick={() => handleView(fornecedor.id)}>Visualizar</ViewButton>
+                        <EditButton onClick={() => handleEdit(fornecedor.id)}>Editar</EditButton>
+                        <DeleteButton onClick={() => handleDelete(fornecedor.id)}>Excluir</DeleteButton>
+                      </Actions>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </PageContainer>
+        </PageWrapper>
+      </main>
       <Footer />
     </>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import GlobalStyle from "../../globalStyle/style.js";
 import api from '../../api/api';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -220,301 +221,304 @@ const VendasForm = () => {
 
   return (
     <>
+      <GlobalStyle />
       <Header />
-      <BreadcrumbWrapper>
-        <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Principal</span> &gt;{' '}
-          <span onClick={() => navigate('/vendas')}>Vendas</span> &gt;{' '}
-          {isViewMode ? 'Visualizar Documento' : id ? 'Editar Documento' : 'Nova Venda'}
-        </Breadcrumb>
-      </BreadcrumbWrapper>
-      <PageWrapper>
-        <PageContainer>
-          <Title>
-            {isViewMode ? 'Visualizar Venda' : id ? 'Editar Venda' : 'Nova Venda'}
-          </Title>
+      <main>
+        <BreadcrumbWrapper>
+          <Breadcrumb>
+            <span onClick={() => navigate('/home')}>Principal</span> &gt;
+            <span onClick={() => navigate('/vendas')}> Vendas</span> &gt;
+            <span>{isViewMode ? ' Visualizar Documento' : id ? ' Editar Documento' : ' Nova Venda'}</span>
+          </Breadcrumb>
+        </BreadcrumbWrapper>
+        <PageWrapper>
+          <PageContainer>
+            <Title>
+              {isViewMode ? 'Visualizar Venda' : id ? 'Editar Venda' : 'Nova Venda'}
+            </Title>
 
-          {loading ? (
-            <p>Carregando dados...</p>
-          ) : (
-            <>
-              <FormSection>
-                <FormRow>
+            {loading ? (
+              <p>Carregando dados...</p>
+            ) : (
+              <>
+                <FormSection>
+                  <FormRow>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Cliente</label>
+                      <select
+                        name="idf_identificacao"
+                        value={venda.idf_identificacao}
+                        onChange={handleChange}
+                        disabled={isViewMode}
+                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
+                      >
+                        <option value="">Selecione um cliente</option>
+                        {clientes.map(cli => (
+                          <option key={cli.id} value={cli.id}>
+                            {cli.nome}
+                          </option>
+                        ))}
+                      </select>
+
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Data de Emissão</label>
+                      <Input
+                        name="dataEmissao"
+                        type="date"
+                        value={venda.dataEmissao}
+                        onChange={handleChange}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                  </FormRow>
+
+                  <FormRow>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Número Documento</label>
+                      <Input
+                        name="documento"
+                        value={venda.documento}
+                        onChange={handleChange}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Bruto</label>
+                      <Input
+                        name="valorBruto"
+                        value={venda.valorBruto}
+                        onChange={(e) => {
+                          const numericValue = onlyNumbersAndComma(e.target.value);
+                          setVenda((prev) => ({ ...prev, valorBruto: numericValue }));
+                        }}
+                        onBlur={() => {
+                          setVenda((prev) => ({
+                            ...prev,
+                            valorBruto: prev.valorBruto ? parseFloat(prev.valorBruto).toFixed(2) : '0.00',
+                          }));
+                        }}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                  </FormRow>
+
+                  <FormRow>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Líquido</label>
+                      <Input
+                        name="valorLiquido"
+                        value={venda.valorLiquido}
+                        onChange={(e) => {
+                          const numericValue = onlyNumbersAndComma(e.target.value);
+                          setVenda((prev) => ({ ...prev, valorLiquido: numericValue }));
+                        }}
+                        onBlur={() => {
+                          setVenda((prev) => ({
+                            ...prev,
+                            valorLiquido: prev.valorLiquido ? parseFloat(prev.valorLiquido).toFixed(2) : '0.00',
+                          }));
+                        }}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Protocolo de Autorização</label>
+                      <Input
+                        name="protocolo"
+                        value={venda.protocolo}
+                        onChange={handleChange}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                  </FormRow>
+
+                  <FormRow>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Valor do Frete</label>
+                      <Input
+                        name="frete"
+                        value={venda.frete}
+                        onChange={(e) => {
+                          const numericValue = onlyNumbersAndComma(e.target.value);
+                          setVenda((prev) => ({ ...prev, frete: numericValue }));
+                        }}
+                        onBlur={() => {
+                          setVenda((prev) => ({
+                            ...prev,
+                            frete: prev.frete ? parseFloat(prev.frete).toFixed(2) : '0.00',
+                          }));
+                        }}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Data Entrada</label>
+                      <Input
+                        name="dataEntrada"
+                        type="date"
+                        value={venda.dataEntrada}
+                        onChange={handleChange}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                  </FormRow>
+                  <FormRow>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Chave NFE</label>
+                      <Input
+                        name="chave"
+                        value={venda.chave}
+                        onChange={handleChange}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                  </FormRow>
+                </FormSection>
+              </>
+            )}
+            <Title>Itens</Title>
+            <FormSection>
+              {itens.map(item => (
+                <CompositionRow key={item.id}>
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Cliente</label>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Produto</label>
                     <select
-                      name="idf_identificacao"
-                      value={venda.idf_identificacao}
-                      onChange={handleChange}
+                      value={item.idf_produto || ''} // você precisará armazenar o ID agora
+                      onChange={(e) => {
+                        const produtoId = parseInt(e.target.value, 10);
+                        const produtoObj = produtos.find(p => p.id === produtoId);
+
+                        if (produtoObj) {
+                          handleItemChange(item.id, 'idf_produto', produtoId); // armazenar o ID
+                          handleItemChange(item.id, 'produto', produtoObj.descricao); // se quiser manter nome
+                          handleItemChange(item.id, 'valorUnitario', produtoObj.preco.toString());
+
+                          if (item.quantidade) {
+                            const total = (parseFloat(item.quantidade) * produtoObj.preco).toFixed(2);
+                            handleItemChange(item.id, 'valorTotal', total);
+                          }
+                        }
+                      }}
                       disabled={isViewMode}
-                      style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
+                      style={{
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid #ccc',
+                        fontSize: '14px'
+                      }}
                     >
-                      <option value="">Selecione um cliente</option>
-                      {clientes.map(cli => (
-                        <option key={cli.id} value={cli.id}>
-                          {cli.nome}
+                      <option value="">Selecione um produto</option>
+                      {produtos.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {`${p.descricao} - Lote: ${p.codigo}`}
                         </option>
                       ))}
                     </select>
 
                   </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Data de Emissão</label>
-                    <Input
-                      name="dataEmissao"
-                      type="date"
-                      value={venda.dataEmissao}
-                      onChange={handleChange}
-                      disabled={isViewMode}
-                    />
-                  </div>
-                </FormRow>
 
-                <FormRow>
+
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Número Documento</label>
-                    <Input
-                      name="documento"
-                      value={venda.documento}
-                      onChange={handleChange}
-                      disabled={isViewMode}
-                    />
-                  </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Bruto</label>
-                    <Input
-                      name="valorBruto"
-                      value={venda.valorBruto}
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Quantidade</label>
+                    <CompositionInput
+                      placeholder="Quantidade"
+                      value={item.quantidade}
                       onChange={(e) => {
-                        const numericValue = onlyNumbersAndComma(e.target.value);
-                        setVenda((prev) => ({ ...prev, valorBruto: numericValue }));
-                      }}
-                      onBlur={() => {
-                        setVenda((prev) => ({
-                          ...prev,
-                          valorBruto: prev.valorBruto ? parseFloat(prev.valorBruto).toFixed(2) : '0.00',
-                        }));
+                        const intVal = formatNumber(e.target.value);
+                        handleItemChange(item.id, 'quantidade', intVal);
+
+                        // Atualiza total se já tiver valorUnitario preenchido:
+                        if (item.valorUnitario) {
+                          const total = (parseFloat(item.valorUnitario) * parseInt(intVal || 0)).toFixed(2);
+                          handleItemChange(item.id, 'valorTotal', isNaN(total) ? '' : total);
+                        }
                       }}
                       disabled={isViewMode}
                     />
-                  </div>
-                </FormRow>
 
-                <FormRow>
+                  </div>
+
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Líquido</label>
-                    <Input
-                      name="valorLiquido"
-                      value={venda.valorLiquido}
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Unidade</label>
+                    <select
+                      value={item.unidade}
+                      onChange={e => handleItemChange(item.id, 'unidade', e.target.value)}
+                      disabled={isViewMode}
+                      style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
+                    >
+                      <option value="">Selecione uma unidade</option>
+                      {(!unidades.some(u => u.nome === item.unidade) && item.unidade) && (
+                        <option value={item.unidade}>{item.unidade}</option>
+                      )}
+
+                      {unidades.map(un => (
+                        <option key={un.id} value={un.nome}>
+                          {un.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Unitário</label>
+                    <CompositionInput
+                      placeholder="Valor Unitário"
+                      value={item.valorUnitario}
                       onChange={(e) => {
-                        const numericValue = onlyNumbersAndComma(e.target.value);
-                        setVenda((prev) => ({ ...prev, valorLiquido: numericValue }));
-                      }}
-                      onBlur={() => {
-                        setVenda((prev) => ({
-                          ...prev,
-                          valorLiquido: prev.valorLiquido ? parseFloat(prev.valorLiquido).toFixed(2) : '0.00',
-                        }));
-                      }}
-                      disabled={isViewMode}
-                    />
-                  </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Protocolo de Autorização</label>
-                    <Input
-                      name="protocolo"
-                      value={venda.protocolo}
-                      onChange={handleChange}
-                      disabled={isViewMode}
-                    />
-                  </div>
-                </FormRow>
+                        const numeric = onlyNumbersAndComma(e.target.value);
+                        handleItemChange(item.id, 'valorUnitario', numeric);
 
-                <FormRow>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Valor do Frete</label>
-                    <Input
-                      name="frete"
-                      value={venda.frete}
-                      onChange={(e) => {
-                        const numericValue = onlyNumbersAndComma(e.target.value);
-                        setVenda((prev) => ({ ...prev, frete: numericValue }));
-                      }}
-                      onBlur={() => {
-                        setVenda((prev) => ({
-                          ...prev,
-                          frete: prev.frete ? parseFloat(prev.frete).toFixed(2) : '0.00',
-                        }));
-                      }}
-                      disabled={isViewMode}
-                    />
-                  </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Data Entrada</label>
-                    <Input
-                      name="dataEntrada"
-                      type="date"
-                      value={venda.dataEntrada}
-                      onChange={handleChange}
-                      disabled={isViewMode}
-                    />
-                  </div>
-                </FormRow>
-                <FormRow>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={{ marginBottom: 4, fontSize: 14 }}>Chave NFE</label>
-                    <Input
-                      name="chave"
-                      value={venda.chave}
-                      onChange={handleChange}
-                      disabled={isViewMode}
-                    />
-                  </div>
-                </FormRow>
-              </FormSection>
-            </>
-          )}
-          <Title>Itens</Title>
-          <FormSection>
-            {itens.map(item => (
-              <CompositionRow key={item.id}>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: 4, fontSize: 14 }}>Produto</label>
-                  <select
-                    value={item.idf_produto || ''} // você precisará armazenar o ID agora
-                    onChange={(e) => {
-                      const produtoId = parseInt(e.target.value, 10);
-                      const produtoObj = produtos.find(p => p.id === produtoId);
-
-                      if (produtoObj) {
-                        handleItemChange(item.id, 'idf_produto', produtoId); // armazenar o ID
-                        handleItemChange(item.id, 'produto', produtoObj.descricao); // se quiser manter nome
-                        handleItemChange(item.id, 'valorUnitario', produtoObj.preco.toString());
-
-                        if (item.quantidade) {
-                          const total = (parseFloat(item.quantidade) * produtoObj.preco).toFixed(2);
+                        if (numeric && item.quantidade) {
+                          const total = (parseFloat(numeric) * parseInt(item.quantidade)).toFixed(2);
                           handleItemChange(item.id, 'valorTotal', total);
                         }
-                      }
-                    }}
-                    disabled={isViewMode}
-                    style={{
-                      padding: '8px',
-                      borderRadius: '4px',
-                      border: '1px solid #ccc',
-                      fontSize: '14px'
-                    }}
-                  >
-                    <option value="">Selecione um produto</option>
-                    {produtos.map(p => (
-                      <option key={p.id} value={p.id}>
-                        {`${p.descricao} - Lote: ${p.codigo}`}
-                      </option>
-                    ))}
-                  </select>
-
+                      }}
+                      onBlur={() => {
+                        handleItemChange(item.id, 'valorUnitario', item.valorUnitario ? parseFloat(item.valorUnitario).toFixed(2) : '0.00');
+                      }}
+                      disabled={isViewMode}
+                    />
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Total</label>
+                    <CompositionInput
+                      placeholder="Valor Total"
+                      value={item.valorTotal}
+                      onChange={(e) => {
+                        const numeric = onlyNumbersAndComma(e.target.value);
+                        handleItemChange(item.id, 'valorTotal', numeric);
+                      }}
+                      onBlur={() => {
+                        handleItemChange(item.id, 'valorTotal', item.valorTotal ? parseFloat(item.valorTotal).toFixed(2) : '0.00');
+                      }}
+                      disabled={true}
+                      readOnly={true}
+                    />
+                  </div>
+                  {!isViewMode && (
+                    <>
+                      <AddButton onClick={handleAddItem}>+</AddButton>
+                      <RemoveButton onClick={() => handleRemoveItem(item.id)}>-</RemoveButton>
+                    </>
+                  )}
+                </CompositionRow>
+              ))}
+              {/* ✅ Botão para adicionar o primeiro item */}
+              {!isViewMode && itens.length === 0 && (
+                <div style={{ marginTop: '10px' }}>
+                  <AddButton onClick={handleAddItem}>Adicionar Item</AddButton>
                 </div>
+              )}
+            </FormSection>
 
 
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: 4, fontSize: 14 }}>Quantidade</label>
-                  <CompositionInput
-                    placeholder="Quantidade"
-                    value={item.quantidade}
-                    onChange={(e) => {
-                      const intVal = formatNumber(e.target.value);
-                      handleItemChange(item.id, 'quantidade', intVal);
-
-                      // Atualiza total se já tiver valorUnitario preenchido:
-                      if (item.valorUnitario) {
-                        const total = (parseFloat(item.valorUnitario) * parseInt(intVal || 0)).toFixed(2);
-                        handleItemChange(item.id, 'valorTotal', isNaN(total) ? '' : total);
-                      }
-                    }}
-                    disabled={isViewMode}
-                  />
-
-                </div>
-
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: 4, fontSize: 14 }}>Unidade</label>
-                  <select
-                    value={item.unidade}
-                    onChange={e => handleItemChange(item.id, 'unidade', e.target.value)}
-                    disabled={isViewMode}
-                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
-                  >
-                    <option value="">Selecione uma unidade</option>
-                    {(!unidades.some(u => u.nome === item.unidade) && item.unidade) && (
-                      <option value={item.unidade}>{item.unidade}</option>
-                    )}
-
-                    {unidades.map(un => (
-                      <option key={un.id} value={un.nome}>
-                        {un.nome}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Unitário</label>
-                  <CompositionInput
-                    placeholder="Valor Unitário"
-                    value={item.valorUnitario}
-                    onChange={(e) => {
-                      const numeric = onlyNumbersAndComma(e.target.value);
-                      handleItemChange(item.id, 'valorUnitario', numeric);
-
-                      if (numeric && item.quantidade) {
-                        const total = (parseFloat(numeric) * parseInt(item.quantidade)).toFixed(2);
-                        handleItemChange(item.id, 'valorTotal', total);
-                      }
-                    }}
-                    onBlur={() => {
-                      handleItemChange(item.id, 'valorUnitario', item.valorUnitario ? parseFloat(item.valorUnitario).toFixed(2) : '0.00');
-                    }}
-                    disabled={isViewMode}
-                  />
-                </div>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Total</label>
-                  <CompositionInput
-                    placeholder="Valor Total"
-                    value={item.valorTotal}
-                    onChange={(e) => {
-                      const numeric = onlyNumbersAndComma(e.target.value);
-                      handleItemChange(item.id, 'valorTotal', numeric);
-                    }}
-                    onBlur={() => {
-                      handleItemChange(item.id, 'valorTotal', item.valorTotal ? parseFloat(item.valorTotal).toFixed(2) : '0.00');
-                    }}
-                    disabled={true}
-                    readOnly={true}
-                  />
-                </div>
-                {!isViewMode && (
-                  <>
-                    <AddButton onClick={handleAddItem}>+</AddButton>
-                    <RemoveButton onClick={() => handleRemoveItem(item.id)}>-</RemoveButton>
-                  </>
-                )}
-              </CompositionRow>
-            ))}
-            {/* ✅ Botão para adicionar o primeiro item */}
-            {!isViewMode && itens.length === 0 && (
-              <div style={{ marginTop: '10px' }}>
-                <AddButton onClick={handleAddItem}>Adicionar Item</AddButton>
-              </div>
-            )}
-          </FormSection>
-
-
-          <div style={{ marginTop: 20 }}>
-            <CancelButton onClick={() => navigate('/vendas')}>Cancelar</CancelButton>
-            {!isViewMode && <SaveButton onClick={handleSave}>Salvar</SaveButton>}
-          </div>
-        </PageContainer>
-      </PageWrapper>
+            <div style={{ marginTop: 20 }}>
+              <CancelButton onClick={() => navigate('/vendas')}>Cancelar</CancelButton>
+              {!isViewMode && <SaveButton onClick={handleSave}>Salvar</SaveButton>}
+            </div>
+          </PageContainer>
+        </PageWrapper>
+      </main>
       <Footer />
     </>
   );

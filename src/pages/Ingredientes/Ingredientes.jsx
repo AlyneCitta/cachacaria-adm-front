@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import GlobalStyle from "../../globalStyle/style.js";
 import {
   Wrapper,
   Container,
@@ -14,7 +16,9 @@ import {
   DetailButton,
   OutOfStock,
   ButtonGroup,
-  ActionButton
+  ActionButton,
+  BreadcrumbWrapper,
+  Breadcrumb,
 } from './Style';
 
 import iconIngredientes from '../../assets/ingredientesColorido.png';
@@ -29,32 +33,43 @@ const ingredientesMock = [
 ];
 
 const Ingredientes = () => {
+  const navigate = useNavigate();
   return (
-    <Wrapper>
-      <Header />
-      <Container>
-        <Image src={iconIngredientes} alt="Ingredientes" />
-        <Title>CONTROLE DE INGREDIENTES</Title>
+    <>
+      <GlobalStyle />
+      <Wrapper>
+        <Header />
+        <main>
+          <BreadcrumbWrapper>
+            <Breadcrumb>
+              <span onClick={() => navigate('/home')}>Principal</span> &gt; <span onClick={() => navigate('/ingredientes')}>Ingredientes</span>
+            </Breadcrumb>
+          </BreadcrumbWrapper>
+          <Container>
+            <Image src={iconIngredientes} alt="Ingredientes" />
+            <Title>CONTROLE DE INGREDIENTES</Title>
 
-        <Grid>
-          {ingredientesMock.map((item, idx) => (
-            <Card key={idx}>
-              <CardTitle>{item.nome}</CardTitle>
-              <Quantity>{item.quantidade}{item.unidade}</Quantity>
-              {item.quantidade === 0 && <OutOfStock>SEM ESTOQUE</OutOfStock>}
-              <Validity>Val: {item.validade}</Validity>
-              <DetailButton>DETALHE</DetailButton>
-            </Card>
-          ))}
-        </Grid>
+            <Grid>
+              {ingredientesMock.map((item, idx) => (
+                <Card key={idx}>
+                  <CardTitle>{item.nome}</CardTitle>
+                  <Quantity>{item.quantidade}{item.unidade}</Quantity>
+                  {item.quantidade === 0 && <OutOfStock>SEM ESTOQUE</OutOfStock>}
+                  <Validity>Val: {item.validade}</Validity>
+                  <DetailButton>DETALHE</DetailButton>
+                </Card>
+              ))}
+            </Grid>
 
-        <ButtonGroup>
-          <ActionButton color="blue">ADICIONAR INGREDIENTES</ActionButton>
-          <ActionButton color="blue">ATUALIZAR</ActionButton>
-        </ButtonGroup>
-      </Container>
-      <Footer />
-    </Wrapper>
+            <ButtonGroup>
+              <ActionButton color="blue">ADICIONAR INGREDIENTES</ActionButton>
+              <ActionButton color="blue">ATUALIZAR</ActionButton>
+            </ButtonGroup>
+          </Container>
+        </main>
+        <Footer />
+      </Wrapper>
+    </>
   );
 };
 

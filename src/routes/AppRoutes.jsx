@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "../auth/AuthContext";
 import Login from "../pages/Login";
@@ -29,8 +28,7 @@ import Ingredientes from '../pages/Ingredientes/Ingredientes';
 const AppRoutes = () => {
   return (
     <AuthProvider>
-      <Routes>
-        <Route path="/home" element={<Home />} />
+      <Routes>        
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
