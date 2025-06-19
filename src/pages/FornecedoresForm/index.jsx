@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import api from '../../services/api';
+import api from '../../api/api';
 import {
   PageContainer,
   Title,
