@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import api from '../../api/api';
+import dayjs from 'dayjs';
 import {
   PageWrapper,
   PageContainer,
@@ -34,7 +35,7 @@ const MaquinarioForm = () => {
 
         setFormData({
           nome: data.nome,
-          aquisicao: data.dataaquisicao?.slice(0, 10) || ''
+          aquisicao: data.dataaquisicao ? dayjs(data.dataaquisicao).format('YYYY-MM-DD') : ''
         });
       } catch (err) {
         console.error("Erro ao carregar maquinário:", err);
@@ -57,7 +58,7 @@ const MaquinarioForm = () => {
 
     const dados = {
       nome: formData.nome,
-      aquisicao: formData.aquisicao
+      aquisicao: dayjs(formData.aquisicao).startOf('day').toISOString()
     };
 
     try {
