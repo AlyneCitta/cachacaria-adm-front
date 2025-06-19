@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import api from '../../api/api';
 import {
   PageWrapper,
   PageContainer,
@@ -26,22 +27,24 @@ const MaquinarioForm = () => {
   });
 
   useEffect(() => {
-    if (id) {
-      fetch(`http://localhost:3001/api/maquinario/${id}`)
-        .then(res => {
-          if (!res.ok) throw new Error('Erro ao carregar dados');
-          return res.json();
-        })
-        .then(data => {
-          setFormData({
-            nome: data.nome,
-            aquisicao: data.dataaquisicao.slice(0, 10)
-          });
-        })
-        .catch(err => {
-          alert('Erro ao carregar maquinário');
-          console.error(err);
+    const carregarMaquinario = async () => {
+      try {
+        const response = await api.get(`/api/maquinario/${id}`);
+        const data = response.data;
+
+        setFormData({
+          nome: data.nome,
+          aquisicao: data.dataaquisicao?.slice(0, 10) || ''
         });
+      } catch (err) {
+        console.error("Erro ao carregar maquinário:", err);
+        const mensagem = err.response?.data?.error || err.message || 'Erro ao conectar com o servidor.';
+        alert('Erro ao carregar maquinário: ' + mensagem);
+      }
+    };
+
+    if (id) {
+      carregarMaquinario();
     }
   }, [id]);
 
@@ -52,31 +55,25 @@ const MaquinarioForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const method = id ? 'PUT' : 'POST';
-    const url = id
-      ? `http://localhost:3001/api/maquinario/${id}`
-      : 'http://localhost:3001/api/maquinario';
+    const dados = {
+      nome: formData.nome,
+      aquisicao: formData.aquisicao
+    };
 
     try {
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome: formData.nome,
-          aquisicao: formData.aquisicao
-        })
-      });
-
-      if (response.ok) {
-        alert(id ? 'Maquinário atualizado com sucesso!' : 'Maquinário salvo com sucesso!');
-        navigate('/maquinariolist');
+      if (id) {
+        await api.put(`/api/maquinario/${id}`, dados);
+        alert('Maquinário atualizado com sucesso!');
       } else {
-        const error = await response.json();
-        alert('Erro: ' + error.error);
+        await api.post('/api/maquinario', dados);
+        alert('Maquinário salvo com sucesso!');
       }
+
+      navigate('/maquinariolist');
     } catch (error) {
       console.error('Erro ao enviar requisição:', error);
-      alert('Erro ao conectar ao servidor');
+      const mensagem = error.response?.data?.error || error.message || 'Erro ao conectar ao servidor';
+      alert('Erro: ' + mensagem);
     }
   };
 
@@ -85,7 +82,7 @@ const MaquinarioForm = () => {
       <Header />
       <BreadcrumbWrapper>
         <Breadcrumb>
-          <span onClick={() => navigate('/home')}>Home</span> &gt; 
+          <span onClick={() => navigate('/home')}>Home</span> &gt;
           <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
           <span>{id ? 'Editar Maquinário' : 'Cadastro de Maquinário'}</span>
         </Breadcrumb>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import axios from 'axios';
+import api from '../../api/api';
 import {
   PageWrapper,
   PageContainer,
@@ -35,10 +36,12 @@ const MaquinarioList = () => {
 
   const fetchMaquinarios = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/maquinario');
+      const response = await api.get('/api/maquinario');
       setMaquinarios(response.data);
     } catch (error) {
       console.error('Erro ao buscar maquinários:', error);
+      const mensagem = error.response?.data?.error || error.message || 'Erro ao conectar com o servidor.';
+      alert('Erro ao buscar maquinários: ' + mensagem);
     }
   };
 
@@ -46,10 +49,13 @@ const MaquinarioList = () => {
     if (!window.confirm('Tem certeza que deseja excluir este maquinário?')) return;
 
     try {
-      await axios.delete(`http://localhost:3001/api/maquinario/${id}`);
-      fetchMaquinarios();
+      await api.delete(`/api/maquinario/${id}`);
+      alert('Maquinário excluído com sucesso!');
+      fetchMaquinarios(); // atualiza a lista
     } catch (error) {
       console.error('Erro ao excluir maquinário:', error);
+      const mensagem = error.response?.data?.error || error.message || 'Erro ao conectar com o servidor.';
+      alert('Erro ao excluir maquinário: ' + mensagem);
     }
   };
 
