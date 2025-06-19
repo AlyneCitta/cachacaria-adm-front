@@ -4,6 +4,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import axios from 'axios';
 import api from '../../api/api';
+import dayjs from 'dayjs';
 import {
   PageWrapper,
   PageContainer,
@@ -96,7 +97,7 @@ const MaquinarioList = () => {
               {maquinarios.map((item) => (
                 <Tr key={item.id}>
                   <Td>{item.nome}</Td>
-                  <Td>{new Date(item.dataaquisicao).toLocaleDateString()}</Td>
+                  <Td>{dayjs(item.dataaquisicao).format('DD/MM/YYYY')}</Td>
                   <Td>
                     <Actions>
                       <ViewButton onClick={() => navigate(`/manutencoeslist?maquinario=${item.id}`)}>Manutenções</ViewButton>
