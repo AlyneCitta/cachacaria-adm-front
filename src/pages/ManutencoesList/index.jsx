@@ -46,10 +46,13 @@ const ManutencoesList = () => {
   };
 
 
-  useEffect(fetchList, [maquinaId]);
+  useEffect(() => {
+    fetchList();
+  }, [maquinaId]);
+
 
   const onEdit = (id) => {
-    navigate(`/manutencoesform/maquinario=${maquinaId}&id=${id}`);
+    navigate(`/manutencoesform?maquinario=${maquinaId}&id=${id}`);
   };
 
   const onDelete = async (id) => {
@@ -82,7 +85,7 @@ const ManutencoesList = () => {
             <BackButton onClick={() => navigate('/maquinariolist')}>
               Voltar
             </BackButton>
-            <NewButton onClick={() => navigate(`/manutencoesform/maquinario=${maquinaId}`)}>
+            <NewButton onClick={() => navigate(`/manutencoesform?maquinario=${maquinaId}`)}>
               Nova Manutenção
             </NewButton>
           </TopActions>
