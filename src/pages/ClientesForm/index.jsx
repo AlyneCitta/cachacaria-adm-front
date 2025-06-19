@@ -46,35 +46,51 @@ const ClientesForm = () => {
   }
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/estados')
-      .then(res => res.json())
-      .then(data => setEstados(data))
-      .catch(err => console.error('Erro ao carregar estados:', err));
+    const fetchEstados = async () => {
+      try {
+        const response = await api.get('/api/estados');
+        setEstados(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar estados:', error);
+      }
+    };
+
+    fetchEstados();
   }, []);
 
+
   useEffect(() => {
+    const fetchCidades = async () => {
+      try {
+        const response = await api.get(`/api/cidades`, {
+          params: { estado: formData.idf_estado }
+        });
+        setCidades(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar cidades:', error);
+      }
+    };
+
     if (formData.idf_estado) {
-      fetch(`http://localhost:3001/api/cidades?estado=${formData.idf_estado}`)
-        .then(res => res.json())
-        .then(data => setCidades(data))
-        .catch(err => console.error('Erro ao carregar cidades:', err));
+      fetchCidades();
     } else {
       setCidades([]);
     }
   }, [formData.idf_estado]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
 
-    if (id) {
-      fetch(`http://localhost:3001/api/clientes/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then(res => {
-          if (!res.ok) throw new Error('Cliente não encontrado');
-          return res.json();
-        })
-        .then(async clienteData => {
+  useEffect(() => {
+    const fetchCliente = async () => {
+      const token = localStorage.getItem('token');
+
+      try {
+        if (id) {
+          const clienteResponse = await api.get(`/api/clientes/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+          const clienteData = clienteResponse.data;
+
           setFormData(prev => ({
             ...prev,
             nome: clienteData.nome || '',
@@ -92,31 +108,35 @@ const ClientesForm = () => {
           }));
 
           if (clienteData.idf_cidade) {
-            const resCidade = await fetch(`http://localhost:3001/api/cidade/${clienteData.idf_cidade}`, {
+            // Buscar dados da cidade
+            const cidadeResponse = await api.get(`/api/cidade/${clienteData.idf_cidade}`, {
               headers: { Authorization: `Bearer ${token}` }
             });
-            if (!resCidade.ok) throw new Error('Cidade não encontrada');
-            const cidadeData = await resCidade.json();
+            const cidadeData = cidadeResponse.data;
 
             setFormData(prev => ({
               ...prev,
               idf_estado: cidadeData.idf_estado
             }));
 
-            const resCidadesDoEstado = await fetch(`http://localhost:3001/api/cidades?estado=${cidadeData.idf_estado}`, {
-              headers: { Authorization: `Bearer ${token}` }
+            // Buscar todas as cidades do estado
+            const cidadesDoEstadoResponse = await api.get(`/api/cidades`, {
+              headers: { Authorization: `Bearer ${token}` },
+              params: { estado: cidadeData.idf_estado }
             });
-            if (!resCidadesDoEstado.ok) throw new Error('Erro ao buscar cidades');
-            const cidadesDoEstado = await resCidadesDoEstado.json();
-            setCidades(cidadesDoEstado);
+
+            setCidades(cidadesDoEstadoResponse.data);
           }
-        })
-        .catch(err => {
-          alert('Erro ao carregar cliente e cidade: ' + err.message);
-          navigate('/clienteslist');
-        });
-    }
+        }
+      } catch (err) {
+        alert('Erro ao carregar cliente e cidade: ' + (err.response?.data?.message || err.message));
+        navigate('/clienteslist');
+      }
+    };
+
+    fetchCliente();
   }, [id, navigate]);
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -135,38 +155,34 @@ const ClientesForm = () => {
     }
 
     const token = localStorage.getItem('token');
-    try {
-      const method = id ? 'PUT' : 'POST';
-      const url = id
-        ? `http://localhost:3001/api/clientes/${id}`
-        : 'http://localhost:3001/api/clientes';
 
+    try {
       const dataToSend = {
         ...formData,
         cliente: true,
         fornecedor: false,
       };
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(dataToSend)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Erro ao salvar cliente');
+      if (id) {
+        // Atualizar cliente (PUT)
+        await api.put(`/api/clientes/${id}`, dataToSend, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } else {
+        // Criar cliente novo (POST)
+        await api.post(`/api/clientes`, dataToSend, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
       }
 
       alert('Cliente salvo com sucesso!');
       navigate('/clienteslist');
     } catch (error) {
-      alert(`Erro: ${error.message}`);
+      const errorMessage = error.response?.data?.error || error.message;
+      alert(`Erro: ${errorMessage}`);
     }
   };
+
 
   return (
     <>
