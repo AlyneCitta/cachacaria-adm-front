@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import api from '../../services/api';
 import {
   PageWrapper,
   PageContainer,
@@ -31,12 +32,12 @@ const FornecedoresList = () => {
 
   const fetchFornecedores = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/fornecedores');
-      if (!response.ok) throw new Error('Erro ao buscar fornecedores');
-      const data = await response.json();
-      setFornecedores(data);
+      const response = await api.get("/api/fornecedores");
+      setFornecedores(response.data);
     } catch (error) {
-      alert('Erro ao carregar fornecedores: ' + error.message);
+      console.error("Erro ao carregar fornecedores:", error);
+      const mensagem = error.response?.data?.error || "Erro ao conectar com o servidor.";
+      alert("Erro ao carregar fornecedores: " + mensagem);
     }
   };
 
@@ -57,18 +58,13 @@ const FornecedoresList = () => {
     if (!confirmar) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/fornecedores/${id}`, {
-        method: 'DELETE'
-      });
-      if (response.ok) {
-        alert('Fornecedor excluído com sucesso');
-        fetchFornecedores();
-      } else {
-        const errorData = await response.json();
-        alert('Erro ao excluir fornecedor: ' + errorData.message);
-      }
+      await api.delete(`/api/fornecedores/${id}`);
+      alert('Fornecedor excluído com sucesso');
+      fetchFornecedores(); // atualiza a lista
     } catch (error) {
-      alert('Erro ao excluir fornecedor: ' + error.message);
+      console.error("Erro ao excluir fornecedor:", error);
+      const mensagem = error.response?.data?.error || "Erro ao conectar com o servidor.";
+      alert('Erro ao excluir fornecedor: ' + mensagem);
     }
   };
 

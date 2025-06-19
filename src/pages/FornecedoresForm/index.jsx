@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import api from '../../services/api';
 import {
   PageContainer,
   Title,
@@ -39,19 +40,34 @@ const FornecedoresForm = () => {
 
   // Carregar estados ao montar
   useEffect(() => {
-    fetch('http://localhost:3001/api/estados')
-      .then(res => res.json())
-      .then(data => setEstados(data))
-      .catch(err => console.error('Erro ao carregar estados:', err));
+    const fetchEstados = async () => {
+      try {
+        const response = await api.get('/api/estados');
+        setEstados(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar estados:', error);
+        const mensagem = error.response?.data?.error || "Erro ao conectar com o servidor.";
+        alert("Erro ao carregar estados: " + mensagem);
+      }
+    };
+    fetchEstados();
   }, []);
 
   // Quando muda estado, carregar cidades
   useEffect(() => {
+    const fetchCidades = async () => {
+      try {
+        const response = await api.get(`/api/cidades?estado=${formData.idf_estado}`);
+        setCidades(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar cidades:', error);
+        const mensagem = error.response?.data?.error || 'Erro ao conectar com o servidor.';
+        alert('Erro ao carregar cidades: ' + mensagem);
+      }
+    };
+
     if (formData.idf_estado) {
-      fetch(`http://localhost:3001/api/cidades?estado=${formData.idf_estado}`)
-        .then(res => res.json())
-        .then(data => setCidades(data))
-        .catch(err => console.error('Erro ao carregar cidades:', err));
+      fetchCidades();
     } else {
       setCidades([]);
       setFormData(prev => ({ ...prev, idf_cidade: '' }));
@@ -61,56 +77,58 @@ const FornecedoresForm = () => {
   // Carregar dados do fornecedor se id existir
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (id) {
-      fetch(`http://localhost:3001/api/fornecedores/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then(res => {
-          if (!res.ok) throw new Error('Fornecedor não encontrado');
-          return res.json();
-        })
-        .then(async fornecedorData => {
+
+    const carregarFornecedor = async () => {
+      try {
+        const resFornecedor = await api.get(`/api/fornecedores/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const fornecedorData = resFornecedor.data;
+
+        setFormData(prev => ({
+          ...prev,
+          nome: fornecedorData.nome || '',
+          cnpj: fornecedorData.cpfcnpj || '',
+          email: fornecedorData.emailcontato || '',
+          telefone: fornecedorData.telefone || '',
+          cep: fornecedorData.cep || '',
+          logradouro: fornecedorData.logradouro || '',
+          numero: fornecedorData.numero || '',
+          complemento: fornecedorData.complemento || '',
+          bairro: fornecedorData.bairro || '',
+          idf_cidade: fornecedorData.idf_cidade || '',
+          fornecedor: true,
+        }));
+
+        if (fornecedorData.idf_cidade) {
+          const resCidade = await api.get(`/api/cidade/${fornecedorData.idf_cidade}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+          const cidadeData = resCidade.data;
+
           setFormData(prev => ({
             ...prev,
-            nome: fornecedorData.nome || '',
-            cnpj: fornecedorData.cpfcnpj || '',
-            email: fornecedorData.emailcontato || '',
-            telefone: fornecedorData.telefone || '',
-            cep: fornecedorData.cep || '',
-            logradouro: fornecedorData.logradouro || '',
-            numero: fornecedorData.numero || '',
-            complemento: fornecedorData.complemento || '',
-            bairro: fornecedorData.bairro || '',
-            idf_cidade: fornecedorData.idf_cidade || '',
-            fornecedor: true,
+            idf_estado: cidadeData.idf_estado
           }));
 
-          if (fornecedorData.idf_cidade) {
-            // Buscar cidade para pegar estado
-            const resCidade = await fetch(`http://localhost:3001/api/cidade/${fornecedorData.idf_cidade}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!resCidade.ok) throw new Error('Cidade não encontrada');
-            const cidadeData = await resCidade.json();
+          const resCidadesDoEstado = await api.get(`/api/cidades?estado=${cidadeData.idf_estado}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
 
-            setFormData(prev => ({
-              ...prev,
-              idf_estado: cidadeData.idf_estado
-            }));
+          setCidades(resCidadesDoEstado.data);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar fornecedor e cidade:', err);
+        const mensagem = err.response?.data?.error || err.message || 'Erro inesperado';
+        alert('Erro ao carregar fornecedor e cidade: ' + mensagem);
+        navigate('/fornecedoreslist');
+      }
+    };
 
-            // Buscar cidades do estado para preencher select
-            const resCidadesDoEstado = await fetch(`http://localhost:3001/api/cidades?estado=${cidadeData.idf_estado}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!resCidadesDoEstado.ok) throw new Error('Erro ao buscar cidades');
-            const cidadesDoEstado = await resCidadesDoEstado.json();
-            setCidades(cidadesDoEstado);
-          }
-        })
-        .catch(err => {
-          alert('Erro ao carregar fornecedor e cidade: ' + err.message);
-          navigate('/fornecedoreslist');
-        });
+    if (id) {
+      carregarFornecedor();
     }
   }, [id, navigate]);
 
@@ -122,7 +140,7 @@ const FornecedoresForm = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!formData.idf_cidade) {
@@ -132,11 +150,6 @@ const FornecedoresForm = () => {
 
   const token = localStorage.getItem('token');
   try {
-    const method = id ? 'PUT' : 'POST';
-    const url = id
-      ? `http://localhost:3001/api/fornecedores/${id}`
-      : 'http://localhost:3001/api/fornecedores';
-
     const { cnpj, email, ...rest } = formData;
 
     const dataToSend = {
@@ -147,24 +160,24 @@ const FornecedoresForm = () => {
       cliente: false,
     };
 
-    const response = await fetch(url, {
-      method,
+    const config = {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(dataToSend)
-    });
+        Authorization: `Bearer ${token}`,
+      }
+    };
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || errorData.message || 'Erro ao salvar fornecedor');
+    if (id) {
+      await api.put(`/api/fornecedores/${id}`, dataToSend, config);
+    } else {
+      await api.post('/api/fornecedores', dataToSend, config);
     }
 
     alert('Fornecedor salvo com sucesso!');
     navigate('/fornecedoreslist');
   } catch (error) {
-    alert(`Erro: ${error.message}`);
+    console.error("Erro ao salvar fornecedor:", error);
+    const mensagem = error.response?.data?.error || error.message || 'Erro ao conectar com o servidor.';
+    alert(`Erro: ${mensagem}`);
   }
 };
 
