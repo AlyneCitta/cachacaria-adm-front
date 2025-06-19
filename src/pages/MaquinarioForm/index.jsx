@@ -58,7 +58,7 @@ const MaquinarioForm = () => {
 
     const dados = {
       nome: formData.nome,
-      aquisicao: dayjs(formData.aquisicao).startOf('day').toISOString()
+      aquisicao: dayjs(formData.aquisicao).hour(3).startOf('hour').toISOString()
     };
 
     try {
