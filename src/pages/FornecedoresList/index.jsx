@@ -119,3 +119,4 @@ const FornecedoresList = () => {
 };
 
 export default FornecedoresList;
+
