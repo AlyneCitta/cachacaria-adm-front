@@ -62,7 +62,7 @@ const AppRoutes = () => {
         <Route path="/estoque" element={<EstoqueList />} />
         <Route path="/estoque/view/:IdProduct" element={<ConsultaEstoqueProduto />} />        
         <Route path="/utensilios" element={<Utensilios />} />
-        <Route path="/Relatorio" element={<Relatorio />} />
+        <Route path="/relatorio" element={<Relatorio />} />
         <Route path="/ingredientes" element={<Ingredientes />} />
       </Routes>
     </AuthProvider>
