@@ -524,8 +524,7 @@ const VendasForm = () => {
                     </>
                   )}
                 </CompositionRow>
-              ))}
-              {/* ✅ Botão para adicionar o primeiro item */}
+              ))}              
               {!isViewMode && itens.length === 0 && (
                 <div style={{ marginTop: '10px' }}>
                   <AddButton onClick={handleAddItem}>Adicionar Item</AddButton>

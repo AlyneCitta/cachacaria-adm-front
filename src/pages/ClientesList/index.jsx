@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import GlobalStyle from "../../globalStyle/style.js";
-import api from '../../api/api';
 import {
   PageWrapper,
   PageContainer,
@@ -33,8 +31,10 @@ const ClientesList = () => {
 
   const fetchClientes = async () => {
     try {
-      const response = await api.get('/api/clientes');
-      setClientes(response.data);
+      const response = await fetch('http://localhost:3001/api/clientes');
+      if (!response.ok) throw new Error('Erro ao buscar clientes');
+      const data = await response.json();
+      setClientes(data);
     } catch (error) {
       alert('Erro ao carregar clientes: ' + error.message);
     }
@@ -63,13 +63,23 @@ const ClientesList = () => {
     if (!confirmar) return;
 
     try {
-      await api.delete(`/api/clientes/${id}`);
-      alert('Cliente excluído com sucesso');
-      fetchClientes();
+      const response = await fetch(`http://localhost:3001/api/clientes/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        alert('Cliente excluído com sucesso');
+        fetchClientes();
+      } else {
+        const errorData = await response.json();
+        alert('Erro ao excluir cliente: ' + errorData.message);
+      }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message;
-      alert('Erro ao excluir cliente: ' + errorMessage);
+      alert('Erro ao excluir cliente: ' + error.message);
     }
+  };
+
+  const handleView = (id) => {
+    navigate(`http://localhost:3001/api/clientes/view/${id}`);
   };
 
   const handleNew = () => {
@@ -91,60 +101,57 @@ const ClientesList = () => {
   return (
     <>
       <Header />
-      <GlobalStyle />
-      <main>
-        <BreadcrumbWrapper>
-          <Breadcrumb>
-            <span onClick={goToHome}>Principal</span> &gt; <span onClick={goToClientes}>Clientes</span>
-          </Breadcrumb>
-        </BreadcrumbWrapper>
-        <PageWrapper>
-          <PageContainer>
-            <Title>Lista de Clientes</Title>
+      <BreadcrumbWrapper>
+        <Breadcrumb>
+          <span onClick={goToHome}>Home</span> &gt; <span onClick={goToClientes}>Clientes</span>
+        </Breadcrumb>
+      </BreadcrumbWrapper>
+      <PageWrapper>
+        <PageContainer>
+          <Title>Lista de Clientes</Title>
 
-            <TopActions>
-              <BackButton onClick={handleBack}>Voltar</BackButton>
-              <NewButton onClick={handleNew}>Novo Cliente</NewButton>
-            </TopActions>
+          <TopActions>
+            <BackButton onClick={handleBack}>Voltar</BackButton>
+            <NewButton onClick={handleNew}>Novo Cliente</NewButton>
+          </TopActions>
 
-            <SearchInput
-              type="text"
-              placeholder="Pesquisar por nome..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          <SearchInput
+            type="text"
+            placeholder="Pesquisar por nome..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Nome</Th>
-                  <Th>Data Nasc.</Th>
-                  <Th>Email</Th>
-                  <Th>Telefone</Th>
-                  <Th>Ações</Th>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Nome</Th>
+                <Th>Data Nasc.</Th>
+                <Th>Email</Th>
+                <Th>Telefone</Th>
+                <Th>Ações</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {filteredClientes.map((cliente) => (
+                <Tr key={cliente.id}>
+                  <Td>{cliente.nome}</Td>
+                  <Td>{formatDate(cliente.dtanascimento || cliente.datanasc)}</Td>
+                  <Td>{cliente.emailcontato || cliente.email}</Td>
+                  <Td>{cliente.telefone}</Td>
+                  <Td>
+                    <Actions>
+                      <ViewButton onClick={() => navigate(`/clientesform/${cliente.id}?view=true`)}>Visualizar</ViewButton>
+                      <EditButton onClick={() => handleEdit(cliente.id)}>Editar</EditButton>
+                      <DeleteButton onClick={() => handleDelete(cliente.id)}>Excluir</DeleteButton>
+                    </Actions>
+                  </Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {filteredClientes.map((cliente) => (
-                  <Tr key={cliente.id}>
-                    <Td>{cliente.nome}</Td>
-                    <Td>{formatDate(cliente.dtanascimento || cliente.datanasc)}</Td>
-                    <Td>{cliente.emailcontato || cliente.email}</Td>
-                    <Td>{cliente.telefone}</Td>
-                    <Td>
-                      <Actions>
-                        <ViewButton onClick={() => navigate(`/clientesform/${cliente.id}?view=true`)}>Visualizar</ViewButton>
-                        <EditButton onClick={() => handleEdit(cliente.id)}>Editar</EditButton>
-                        <DeleteButton onClick={() => handleDelete(cliente.id)}>Excluir</DeleteButton>
-                      </Actions>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </PageContainer>
-        </PageWrapper>
-      </main>
+              ))}
+            </Tbody>
+          </Table>
+        </PageContainer>
+      </PageWrapper>
       <Footer />
     </>
   );

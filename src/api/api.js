@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://cachacaria-adm-back-ii0x.onrender.com',
+  baseURL: 'http://localhost:3001',
   timeout: 5000, 
   headers: {
     'Content-Type': 'application/json',

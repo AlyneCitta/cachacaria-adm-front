@@ -33,13 +33,15 @@ function Login() {
         }
 
         try {
-            // ENVIA os campos corretos que o backend espera
-            await login({ email, password }); // <--- AQUI está o ajuste
+            // Se o seu login retorna uma Promise, aguarde aqui
+            await login({ email, password });
+            // Após login com sucesso, redirecione para home
             navigate('/home');
         } catch (error) {
             alert("Erro ao fazer login. Verifique suas credenciais.");
         }
     };
+
     return (
         <main style={styles.main}>
             <GlobalStyle />

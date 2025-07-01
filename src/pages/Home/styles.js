@@ -6,7 +6,7 @@ export const HomeContainer = styled.div`
 `;
 
 export const WelcomeText = styled.h2`
-  margin-bottom: 5px;  
+  margin-bottom: 5px;
 `;
 
 export const Grid = styled.div`

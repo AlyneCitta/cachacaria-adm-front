@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/api';
-import GlobalStyle from "../../globalStyle/style.js";
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import {
@@ -287,239 +286,234 @@ const OrdemProducaoForm = () => {
 
   return (
     <>
-      <GlobalStyle />
       <Header />
-      <main>
-        <BreadcrumbWrapper>
-          <Breadcrumb>
-            <span onClick={() => navigate('/home')}>Principal</span> &gt;
-            <span onClick={() => navigate('/producao')}> Ordem de Produção</span> &gt;
-            <span>{isViewMode ? ' Visualizar' : (id ? ' Editar' : ' Incluir')}</span>
-          </Breadcrumb>
-        </BreadcrumbWrapper>
+      <BreadcrumbWrapper>
+        <Breadcrumb>
+          <span onClick={() => navigate('/home')}>Principal</span> &gt; <span onClick={() => navigate('/producao')}>Ordem de Produção</span> &gt; {isViewMode ? 'Visualizar' : (id ? 'Editar' : 'Incluir')}
+        </Breadcrumb>
+      </BreadcrumbWrapper>
 
-        <PageWrapper>
-          <PageContainer>
-            <Title>Ordem de Produção</Title>
+      <PageWrapper>
+        <PageContainer>
+          <Title>Ordem de Produção</Title>
 
-            <FormSection>
-              <FormRow>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px', fontSize: '14px' }}>Responsável</label>
+          <FormSection>
+            <FormRow>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <label style={{ marginBottom: '4px', fontSize: '14px' }}>Responsável</label>
+                <Select
+                  name="usuario"
+                  value={String(ordem.usuario || '')}
+                  onChange={handleChange}
+                  disabled={isViewMode}
+                >
+                  <option value="">Selecione o usuário</option>
+                  {usuarios.map((user) => (
+                    <option key={user.id} value={String(user.id)}>
+                      {user.nome}
+                    </option>
+                  ))}
+                </Select>
+
+              </div>
+
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <label style={{ marginBottom: '4px', fontSize: '14px' }}>Data de Produção</label>
+                <Input
+                  type="date"
+                  name="dataProducao"
+                  value={formatDateForInput(ordem.dataProducao)}
+                  onChange={handleChange}
+                  disabled={isViewMode}
+                  readOnly={isViewMode}
+                />
+              </div>
+            </FormRow>
+
+            <FormRow>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <label style={{ marginBottom: '4px', fontSize: '14px' }}>Número Documento</label>
+                <Input name="documento" value={ordem.documento} onChange={handleChange} disabled={isViewMode} readOnly={isViewMode} />
+              </div>
+
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <label style={{ marginBottom: '4px', fontSize: '14px' }}>Data de Validade</label>
+                <Input
+                  type="date"
+                  name="dataValidade"
+                  value={formatDateForInput(ordem.dataValidade)}
+                  onChange={handleChange}
+                  disabled={isViewMode}
+                  readOnly={isViewMode}
+                />
+              </div>
+            </FormRow>
+
+            <FormRow>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <label style={{ marginBottom: '4px', fontSize: '14px' }}>Custo Produção</label>
+                <Input
+                  name="custoProducao"
+                  value={isViewMode ? formatCurrency(ordem.custoProducao) : formatCurrency(ordem.custoProducao)}
+                  onChange={(e) => {
+                    const numericValue = parseCurrency(e.target.value);
+                    setOrdem((prev) => ({ ...prev, custoProducao: numericValue }));
+                  }}
+                  disabled={isViewMode}
+                  readOnly={isViewMode}
+                />
+              </div>
+
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <label style={{ marginBottom: '4px', fontSize: '14px' }}>Quantidade Produzida</label>
+                <Input
+                  name="quantidadeProduzida"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value={ordem.quantidadeProduzida}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    setOrdem((prev) => ({
+                      ...prev,
+                      quantidadeProduzida: value ? parseInt(value) : ''
+                    }));
+                  }}
+                  disabled={isViewMode}
+                  readOnly={isViewMode}
+                />
+              </div>
+
+            </FormRow>
+
+            <FormRow>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <label style={{ marginBottom: '4px', fontSize: '14px' }}>Produto</label>
+                {isViewMode ? (
+                  <Input
+                    value={produtos.find(p => p.id_produto === ordem.idf_produto)?.descricao || ordem.produto || ''}
+                    disabled
+                    readOnly
+                  />
+                ) : (
                   <Select
-                    name="usuario"
-                    value={String(ordem.usuario || '')}
+                    name="idf_produto"
+                    value={ordem.idf_produto || ''}
                     onChange={handleChange}
                     disabled={isViewMode}
                   >
-                    <option value="">Selecione o usuário</option>
-                    {usuarios.map((user) => (
-                      <option key={user.id} value={String(user.id)}>
-                        {user.nome}
+                    <option value="">Selecione o produto</option>
+                    {produtos.map((p) => (
+                      <option key={p.id_produto} value={p.id_produto}>
+                        {p.descricao}
                       </option>
                     ))}
                   </Select>
+                )}
+              </div>
 
-                </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <label style={{ marginBottom: '4px', fontSize: '14px' }}>Lote</label>
+                <Input
+                  name="codigoLote"
+                  value={ordem.codigoLote}
+                  onChange={handleChange}
+                  disabled={isViewMode}
+                  readOnly={isViewMode}
+                />
+              </div>
+            </FormRow>
 
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px', fontSize: '14px' }}>Data de Produção</label>
-                  <Input
-                    type="date"
-                    name="dataProducao"
-                    value={formatDateForInput(ordem.dataProducao)}
-                    onChange={handleChange}
-                    disabled={isViewMode}
-                    readOnly={isViewMode}
-                  />
-                </div>
-              </FormRow>
-
-              <FormRow>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px', fontSize: '14px' }}>Número Documento</label>
-                  <Input name="documento" value={ordem.documento} onChange={handleChange} disabled={isViewMode} readOnly={isViewMode} />
-                </div>
-
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px', fontSize: '14px' }}>Data de Validade</label>
-                  <Input
-                    type="date"
-                    name="dataValidade"
-                    value={formatDateForInput(ordem.dataValidade)}
-                    onChange={handleChange}
-                    disabled={isViewMode}
-                    readOnly={isViewMode}
-                  />
-                </div>
-              </FormRow>
-
-              <FormRow>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px', fontSize: '14px' }}>Custo Produção</label>
-                  <Input
-                    name="custoProducao"
-                    value={isViewMode ? formatCurrency(ordem.custoProducao) : formatCurrency(ordem.custoProducao)}
-                    onChange={(e) => {
-                      const numericValue = parseCurrency(e.target.value);
-                      setOrdem((prev) => ({ ...prev, custoProducao: numericValue }));
-                    }}
-                    disabled={isViewMode}
-                    readOnly={isViewMode}
-                  />
-                </div>
-
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px', fontSize: '14px' }}>Quantidade Produzida</label>
-                  <Input
-                    name="quantidadeProduzida"
-                    type="number"
-                    min="1"
-                    step="1"
-                    value={ordem.quantidadeProduzida}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '');
-                      setOrdem((prev) => ({
-                        ...prev,
-                        quantidadeProduzida: value ? parseInt(value) : ''
-                      }));
-                    }}
-                    disabled={isViewMode}
-                    readOnly={isViewMode}
-                  />
-                </div>
-
-              </FormRow>
-
-              <FormRow>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px', fontSize: '14px' }}>Produto</label>
-                  {isViewMode ? (
-                    <Input
-                      value={produtos.find(p => p.id_produto === ordem.idf_produto)?.descricao || ordem.produto || ''}
-                      disabled
-                      readOnly
+          </FormSection>
+          <Title>Composição</Title>
+          <CompositionContainer>
+            {composicao.length > 0 ? (
+              composicao.map((item, index) => (
+                <CompositionRow key={index}>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: '4px', fontSize: '14px' }}>Produto</label>
+                    <CompositionInput
+                      value={item.descricao || ''}
+                      onChange={(e) => handleComposicaoChange(index, 'descricao', e.target.value)}
+                      disabled={true}
+                      readOnly={true}
                     />
-                  ) : (
-                    <Select
-                      name="idf_produto"
-                      value={ordem.idf_produto || ''}
-                      onChange={handleChange}
+                  </div>
+
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: '4px', fontSize: '14px' }}>Necessidade</label>
+                    <CompositionInput
+                      value={item.qtdnecessidade || ''}
+                      onChange={(e) => handleComposicaoChange(index, 'qtdnecessidade', e.target.value)}
+                      disabled={true}
+                      readOnly={true}
+                    />
+                  </div>
+
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: '4px', fontSize: '14px' }}>Requisitado</label>
+                    <CompositionInput
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={item.qtdrequisitado || ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '');
+                        handleComposicaoChange(index, 'qtdrequisitado', value ? parseInt(value) : '');
+                      }}
                       disabled={isViewMode}
-                    >
-                      <option value="">Selecione o produto</option>
-                      {produtos.map((p) => (
-                        <option key={p.id_produto} value={p.id_produto}>
-                          {p.descricao}
-                        </option>
-                      ))}
-                    </Select>
-                  )}
-                </div>
-
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <label style={{ marginBottom: '4px', fontSize: '14px' }}>Lote</label>
-                  <Input
-                    name="codigoLote"
-                    value={ordem.codigoLote}
-                    onChange={handleChange}
-                    disabled={isViewMode}
-                    readOnly={isViewMode}
-                  />
-                </div>
-              </FormRow>
-
-            </FormSection>
-            <Title>Composição</Title>
-            <CompositionContainer>
-              {composicao.length > 0 ? (
-                composicao.map((item, index) => (
-                  <CompositionRow key={index}>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: '4px', fontSize: '14px' }}>Produto</label>
-                      <CompositionInput
-                        value={item.descricao || ''}
-                        onChange={(e) => handleComposicaoChange(index, 'descricao', e.target.value)}
-                        disabled={true}
-                        readOnly={true}
-                      />
-                    </div>
-
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: '4px', fontSize: '14px' }}>Necessidade</label>
-                      <CompositionInput
-                        value={item.qtdnecessidade || ''}
-                        onChange={(e) => handleComposicaoChange(index, 'qtdnecessidade', e.target.value)}
-                        disabled={true}
-                        readOnly={true}
-                      />
-                    </div>
-
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: '4px', fontSize: '14px' }}>Requisitado</label>
-                      <CompositionInput
-                        type="number"
-                        min="0"
-                        step="1"
-                        value={item.qtdrequisitado || ''}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '');
-                          handleComposicaoChange(index, 'qtdrequisitado', value ? parseInt(value) : '');
-                        }}
-                        disabled={isViewMode}
-                        readOnly={isViewMode}
-                      />
-                    </div>
+                      readOnly={isViewMode}
+                    />
+                  </div>
 
 
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: '4px', fontSize: '14px' }}>Saldo</label>
-                      <CompositionInput
-                        value={
-                          (parseInt(item.qtdnecessidade || 0) - parseInt(item.qtdrequisitado || 0)).toString()
-                        }
-                        disabled={true}
-                        readOnly={true}
-                      />
-                    </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: '4px', fontSize: '14px' }}>Saldo</label>
+                    <CompositionInput
+                      value={
+                        (parseInt(item.qtdnecessidade || 0) - parseInt(item.qtdrequisitado || 0)).toString()
+                      }
+                      disabled={true}
+                      readOnly={true}
+                    />
+                  </div>
 
 
 
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: '4px', fontSize: '14px' }}>Unidade</label>
-                      <CompositionInput
-                        value={item.unidade || item.nome || ''}
-                        onChange={(e) => handleComposicaoChange(index, 'unidade', e.target.value)}
-                        disabled={true}
-                        readOnly={true}
-                      />
-                    </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <label style={{ marginBottom: '4px', fontSize: '14px' }}>Unidade</label>
+                    <CompositionInput
+                      value={item.unidade || item.nome || ''}
+                      onChange={(e) => handleComposicaoChange(index, 'unidade', e.target.value)}
+                      disabled={true}
+                      readOnly={true}
+                    />
+                  </div>
 
-                    {!isViewMode && (
-                      <>
-                        <RemoveButton onClick={() => handleRemoveComposicao(item.id)}>-</RemoveButton>
-                      </>
-                    )}
-                  </CompositionRow>
-
-                ))
-              ) : (
-                <>
-                  <p>Nenhuma composição cadastrada.</p>
                   {!isViewMode && (
-                    <div style={{ marginTop: '10px' }}>
-                    </div>
+                    <>
+                      <RemoveButton onClick={() => handleRemoveComposicao(item.id)}>-</RemoveButton>
+                    </>
                   )}
-                </>
-              )}
-            </CompositionContainer>
-            <div style={{ marginTop: '20px' }}>
-              <CancelButton onClick={() => navigate('/producao')}>Cancelar</CancelButton>
-              {!isViewMode && <SaveButton onClick={handleSave}>Salvar</SaveButton>}
-            </div>
-          </PageContainer>
-        </PageWrapper>
-      </main>
+                </CompositionRow>
+
+              ))
+            ) : (
+              <>
+                <p>Nenhuma composição cadastrada.</p>
+                {!isViewMode && (
+                  <div style={{ marginTop: '10px' }}>
+                  </div>
+                )}
+              </>
+            )}
+          </CompositionContainer>
+          <div style={{ marginTop: '20px' }}>
+            <CancelButton onClick={() => navigate('/producao')}>Cancelar</CancelButton>
+            {!isViewMode && <SaveButton onClick={handleSave}>Salvar</SaveButton>}
+          </div>
+        </PageContainer>
+      </PageWrapper>
       <Footer />
     </>
   );

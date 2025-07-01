@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import GlobalStyle from "../../globalStyle/style.js";
-import api from '../../api/api';
 import {
   PageWrapper,
   PageContainer,
@@ -33,12 +31,12 @@ const FornecedoresList = () => {
 
   const fetchFornecedores = async () => {
     try {
-      const response = await api.get("/api/fornecedores");
-      setFornecedores(response.data);
+      const response = await fetch('http://localhost:3001/api/fornecedores');
+      if (!response.ok) throw new Error('Erro ao buscar fornecedores');
+      const data = await response.json();
+      setFornecedores(data);
     } catch (error) {
-      console.error("Erro ao carregar fornecedores:", error);
-      const mensagem = error.response?.data?.error || "Erro ao conectar com o servidor.";
-      alert("Erro ao carregar fornecedores: " + mensagem);
+      alert('Erro ao carregar fornecedores: ' + error.message);
     }
   };
 
@@ -59,13 +57,18 @@ const FornecedoresList = () => {
     if (!confirmar) return;
 
     try {
-      await api.delete(`/api/fornecedores/${id}`);
-      alert('Fornecedor excluído com sucesso');
-      fetchFornecedores(); // atualiza a lista
+      const response = await fetch(`http://localhost:3001/api/fornecedores/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        alert('Fornecedor excluído com sucesso');
+        fetchFornecedores();
+      } else {
+        const errorData = await response.json();
+        alert('Erro ao excluir fornecedor: ' + errorData.message);
+      }
     } catch (error) {
-      console.error("Erro ao excluir fornecedor:", error);
-      const mensagem = error.response?.data?.error || "Erro ao conectar com o servidor.";
-      alert('Erro ao excluir fornecedor: ' + mensagem);
+      alert('Erro ao excluir fornecedor: ' + error.message);
     }
   };
 
@@ -91,61 +94,58 @@ const FornecedoresList = () => {
 
   return (
     <>
-      <GlobalStyle />
-      <main>
-        <Header />
-        <BreadcrumbWrapper>
-          <Breadcrumb>
-            <span onClick={goToHome}>Principal</span> &gt; <span onClick={goToFornecedores}>Fornecedores</span>
-          </Breadcrumb>
-        </BreadcrumbWrapper>
-        <PageWrapper>
-          <PageContainer>
-            <Title>Lista de Fornecedores</Title>
+      <Header />
+      <BreadcrumbWrapper>
+        <Breadcrumb>
+          <span onClick={goToHome}>Home</span> &gt; <span onClick={goToFornecedores}>Fornecedores</span>
+        </Breadcrumb>
+      </BreadcrumbWrapper>
+      <PageWrapper>
+        <PageContainer>
+          <Title>Lista de Fornecedores</Title>
 
-            <TopActions>
-              <BackButton onClick={handleBack}>Voltar</BackButton>
-              <NewButton onClick={handleNew}>Novo Fornecedor</NewButton>
-            </TopActions>
+          <TopActions>
+            <BackButton onClick={handleBack}>Voltar</BackButton>
+            <NewButton onClick={handleNew}>Novo Fornecedor</NewButton>
+          </TopActions>
 
-            <SearchInput
-              type="text"
-              placeholder="Pesquisar por nome..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          <SearchInput
+            type="text"
+            placeholder="Pesquisar por nome..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Nome</Th>
-                  <Th>CNPJ</Th>
-                  <Th>Email</Th>
-                  <Th>Telefone</Th>
-                  <Th>Ações</Th>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Nome</Th>
+                <Th>CNPJ</Th>
+                <Th>Email</Th>
+                <Th>Telefone</Th>
+                <Th>Ações</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {filteredFornecedores.map((fornecedor) => (
+                <Tr key={fornecedor.id}>
+                  <Td>{fornecedor.nome}</Td>
+                  <Td>{fornecedor.cpfcnpj}</Td>
+                  <Td>{fornecedor.emailcontato || fornecedor.email}</Td>
+                  <Td>{fornecedor.telefone}</Td>
+                  <Td>
+                    <Actions>
+                      <ViewButton onClick={() => handleView(fornecedor.id)}>Visualizar</ViewButton>
+                      <EditButton onClick={() => handleEdit(fornecedor.id)}>Editar</EditButton>
+                      <DeleteButton onClick={() => handleDelete(fornecedor.id)}>Excluir</DeleteButton>
+                    </Actions>
+                  </Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {filteredFornecedores.map((fornecedor) => (
-                  <Tr key={fornecedor.id}>
-                    <Td>{fornecedor.nome}</Td>
-                    <Td>{fornecedor.cpfcnpj}</Td>
-                    <Td>{fornecedor.emailcontato || fornecedor.email}</Td>
-                    <Td>{fornecedor.telefone}</Td>
-                    <Td>
-                      <Actions>
-                        <ViewButton onClick={() => handleView(fornecedor.id)}>Visualizar</ViewButton>
-                        <EditButton onClick={() => handleEdit(fornecedor.id)}>Editar</EditButton>
-                        <DeleteButton onClick={() => handleDelete(fornecedor.id)}>Excluir</DeleteButton>
-                      </Actions>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </PageContainer>
-        </PageWrapper>
-      </main>
+              ))}
+            </Tbody>
+          </Table>
+        </PageContainer>
+      </PageWrapper>
       <Footer />
     </>
   );

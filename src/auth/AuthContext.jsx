@@ -46,33 +46,33 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-const login = async (formData) => {
-    try {
-        const response = await api.post('/auth/login', formData); // <-- rota ajustada
+    const login = async (formData) => {
+        try {
+            const response = await api.post('/auth/login', formData);
 
-        if (response.status >= 200 && response.status < 300) {
-            const { token, role } = response.data;
+            if (response.status >= 200 && response.status < 300) {
+                const { token, role } = response.data;
 
-            setTokenToStorage(token, role);
-            setUser({ role });
+                setTokenToStorage(token, role);
+                setUser({ role });
 
-            if (getTokenFromStorage()) {
-                if (role === 'user') {
-                    navigate('/');
+                if (getTokenFromStorage()) {
+                    if (role === 'user') {
+                        navigate('/');
+                    } else {
+                        console.warn('Papel desconhecido:', role);
+                    }
                 } else {
-                    console.warn('Papel desconhecido:', role);
+                    console.error("Falha ao armazenar o token.");
                 }
             } else {
-                console.error("Falha ao armazenar o token.");
+                alert('Erro durante o login.');
             }
-        } else {
-            alert('Erro durante o login.');
+        } catch (error) {
+            console.error('Erro ao fazer login:', error);
+            alert('Erro ao fazer login. Verifique suas credenciais.');
         }
-    } catch (error) {
-        console.error('Erro ao fazer login:', error);
-        alert('Erro ao fazer login. Verifique suas credenciais.');
-    }
-};
+    };
 
     const logout = () => {
         removeTokenFromStorage();
@@ -103,4 +103,4 @@ export const useAuth = () => {
     return context;
 };
 
-export default AuthContext;
+export default AuthContext;

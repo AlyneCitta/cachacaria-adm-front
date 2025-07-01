@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import GlobalStyle from "../../globalStyle/style.js";
-import api from '../../api/api';
-import dayjs from 'dayjs';
+import axios from 'axios';
 import {
   PageWrapper,
   PageContainer,
@@ -37,12 +35,10 @@ const MaquinarioList = () => {
 
   const fetchMaquinarios = async () => {
     try {
-      const response = await api.get('/api/maquinario');
+      const response = await axios.get('http://localhost:3001/api/maquinario');
       setMaquinarios(response.data);
     } catch (error) {
       console.error('Erro ao buscar maquinários:', error);
-      const mensagem = error.response?.data?.error || error.message || 'Erro ao conectar com o servidor.';
-      alert('Erro ao buscar maquinários: ' + mensagem);
     }
   };
 
@@ -50,13 +46,10 @@ const MaquinarioList = () => {
     if (!window.confirm('Tem certeza que deseja excluir este maquinário?')) return;
 
     try {
-      await api.delete(`/api/maquinario/${id}`);
-      alert('Maquinário excluído com sucesso!');
-      fetchMaquinarios(); // atualiza a lista
+      await axios.delete(`http://localhost:3001/api/maquinario/${id}`);
+      fetchMaquinarios();
     } catch (error) {
       console.error('Erro ao excluir maquinário:', error);
-      const mensagem = error.response?.data?.error || error.message || 'Erro ao conectar com o servidor.';
-      alert('Erro ao excluir maquinário: ' + mensagem);
     }
   };
 
@@ -70,50 +63,47 @@ const MaquinarioList = () => {
 
   return (
     <>
-      <GlobalStyle />
       <Header />
-      <main>
-        <BreadcrumbWrapper>
-          <Breadcrumb>
-            <span onClick={() => navigate('/home')}>Principal</span> &gt; <span>Maquinários</span>
-          </Breadcrumb>
-        </BreadcrumbWrapper>
-        <PageWrapper>
-          <PageContainer>
-            <Title>Maquinários</Title>
+      <BreadcrumbWrapper>
+        <Breadcrumb>
+          <span onClick={() => navigate('/home')}>Home</span> &gt; <span>Maquinários</span>
+        </Breadcrumb>
+      </BreadcrumbWrapper>
+      <PageWrapper>
+        <PageContainer>
+          <Title>Maquinários</Title>
 
-            <TopActions>
-              <BackButton onClick={() => navigate('/home')}>Voltar</BackButton>
-              <NewButton onClick={handleNew}>Novo Maquinário</NewButton>
-            </TopActions>
+          <TopActions>
+            <BackButton onClick={() => navigate('/home')}>Voltar</BackButton>
+            <NewButton onClick={handleNew}>Novo Maquinário</NewButton>
+          </TopActions>
 
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Nome</Th>
-                  <Th>Data de Aquisição</Th>
-                  <Th>Ações</Th>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Nome</Th>
+                <Th>Data de Aquisição</Th>
+                <Th>Ações</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {maquinarios.map((item) => (
+                <Tr key={item.id}>
+                  <Td>{item.nome}</Td>
+                  <Td>{new Date(item.dataaquisicao).toLocaleDateString()}</Td>
+                  <Td>
+                    <Actions>
+                      <ViewButton onClick={() => navigate(`/manutencoeslist?maquinario=${item.id}`)}>Manutenções</ViewButton>
+                      <EditButton onClick={() => handleEdit(item.id)}>Editar</EditButton>
+                      <DeleteButton onClick={() => handleDelete(item.id)}>Excluir</DeleteButton>
+                    </Actions>
+                  </Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {maquinarios.map((item) => (
-                  <Tr key={item.id}>
-                    <Td>{item.nome}</Td>
-                    <Td>{dayjs(item.dataaquisicao).format('DD/MM/YYYY')}</Td>
-                    <Td>
-                      <Actions>
-                        <ViewButton onClick={() => navigate(`/manutencoeslist?maquinario=${item.id}`)}>Manutenções</ViewButton>
-                        <EditButton onClick={() => handleEdit(item.id)}>Editar</EditButton>
-                        <DeleteButton onClick={() => handleDelete(item.id)}>Excluir</DeleteButton>
-                      </Actions>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </PageContainer>
-        </PageWrapper>
-      </main>
+              ))}
+            </Tbody>
+          </Table>
+        </PageContainer>
+      </PageWrapper>
       <Footer />
     </>
   );

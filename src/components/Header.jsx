@@ -10,12 +10,10 @@ import { useNavigate } from 'react-router-dom';
 const HeaderContainer = styled.header`
   background-color: #aeb6bd;
   position: relative;
-  padding: 20px 0;
+  padding: 10px 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 `;
 
 const Logo = styled.img`

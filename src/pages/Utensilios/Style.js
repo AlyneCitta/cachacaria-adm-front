@@ -44,8 +44,8 @@ export const Button = styled.button`
   color: white;
   background-color: ${({ color }) =>
     color === 'green' ? '#28a745' :
-      color === 'red' ? '#dc3545' :
-        '#4e73df'};
+    color === 'red' ? '#dc3545' :
+    '#4e73df'};
   cursor: pointer;
 
   &:hover {
@@ -83,24 +83,5 @@ export const IconButton = styled.button`
 
   &:hover {
     opacity: 0.6;
-  }
-`;
-
-export const BreadcrumbWrapper = styled.div`
-  padding: 20px 30px 0 30px;
-`;
-
-export const Breadcrumb = styled.div`
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-  color: #666;
-
-  span {
-    cursor: pointer;
-    color: rgba(0, 0, 0, 0.5);
-
-    &:hover {
-      color: #0056b3;
-    }
   }
 `;

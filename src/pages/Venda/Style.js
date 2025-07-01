@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  
+  min-height: 100vh;
 `;
 
 export const PageContainer = styled.div`  
@@ -18,21 +18,17 @@ export const Title = styled.h1`
 `;
 
 export const BreadcrumbWrapper = styled.div`
-  padding: 20px 30px 0 30px;
+  background-color: #f1f1f1;
+  padding: 10px 20px;
 `;
 
 export const Breadcrumb = styled.div`
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-  color: #666;
+  font-size: 14px;
+  color: #333;
 
   span {
     cursor: pointer;
-    color: rgba(0, 0, 0, 0.5);
-
-    &:hover {
-      color: #0056b3;
-    }
+    color: #007bff;
   }
 `;
 

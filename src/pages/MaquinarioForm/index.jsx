@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import GlobalStyle from "../../globalStyle/style.js";
-import api from '../../api/api';
-import dayjs from 'dayjs';
 import {
   PageWrapper,
   PageContainer,
@@ -29,24 +26,22 @@ const MaquinarioForm = () => {
   });
 
   useEffect(() => {
-    const carregarMaquinario = async () => {
-      try {
-        const response = await api.get(`/api/maquinario/${id}`);
-        const data = response.data;
-
-        setFormData({
-          nome: data.nome,
-          aquisicao: data.dataaquisicao ? dayjs(data.dataaquisicao).format('YYYY-MM-DD') : ''
-        });
-      } catch (err) {
-        console.error("Erro ao carregar maquinário:", err);
-        const mensagem = err.response?.data?.error || err.message || 'Erro ao conectar com o servidor.';
-        alert('Erro ao carregar maquinário: ' + mensagem);
-      }
-    };
-
     if (id) {
-      carregarMaquinario();
+      fetch(`http://localhost:3001/api/maquinario/${id}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Erro ao carregar dados');
+          return res.json();
+        })
+        .then(data => {
+          setFormData({
+            nome: data.nome,
+            aquisicao: data.dataaquisicao.slice(0, 10)
+          });
+        })
+        .catch(err => {
+          alert('Erro ao carregar maquinário');
+          console.error(err);
+        });
     }
   }, [id]);
 
@@ -57,60 +52,63 @@ const MaquinarioForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const dados = {
-      nome: formData.nome,
-      aquisicao: dayjs(formData.aquisicao).hour(3).startOf('hour').toISOString()
-    };
+    const method = id ? 'PUT' : 'POST';
+    const url = id
+      ? `http://localhost:3001/api/maquinario/${id}`
+      : 'http://localhost:3001/api/maquinario';
 
     try {
-      if (id) {
-        await api.put(`/api/maquinario/${id}`, dados);
-        alert('Maquinário atualizado com sucesso!');
-      } else {
-        await api.post('/api/maquinario', dados);
-        alert('Maquinário salvo com sucesso!');
-      }
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: formData.nome,
+          aquisicao: formData.aquisicao
+        })
+      });
 
-      navigate('/maquinariolist');
+      if (response.ok) {
+        alert(id ? 'Maquinário atualizado com sucesso!' : 'Maquinário salvo com sucesso!');
+        navigate('/maquinariolist');
+      } else {
+        const error = await response.json();
+        alert('Erro: ' + error.error);
+      }
     } catch (error) {
       console.error('Erro ao enviar requisição:', error);
-      const mensagem = error.response?.data?.error || error.message || 'Erro ao conectar ao servidor';
-      alert('Erro: ' + mensagem);
+      alert('Erro ao conectar ao servidor');
     }
   };
 
   return (
     <>
-      <GlobalStyle />
       <Header />
-      <main>
-        <BreadcrumbWrapper>
-          <Breadcrumb>
-            <span onClick={() => navigate('/home')}>Principal</span> &gt;
-            <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
-            <span>{id ? ' Editar Maquinário' : ' Cadastro de Maquinário'}</span>
-          </Breadcrumb>
-        </BreadcrumbWrapper>
-        <PageWrapper>
-          <PageContainer>
-            <Title>{id ? ' Editar Maquinário' : ' Cadastro de Maquinário'}</Title>
-            <Form onSubmit={handleSubmit}>
-              <Label>Nome:</Label>
-              <Input name="nome" value={formData.nome} onChange={handleChange} required />
+      <BreadcrumbWrapper>
+        <Breadcrumb>
+          <span onClick={() => navigate('/home')}>Home</span> &gt; 
+          <span onClick={() => navigate('/maquinariolist')}> Maquinários</span> &gt;
+          <span>{id ? 'Editar Maquinário' : 'Cadastro de Maquinário'}</span>
+        </Breadcrumb>
+      </BreadcrumbWrapper>
+      <PageWrapper>
+        <PageContainer>
+          <Title>{id ? ' Editar Maquinário' : ' Cadastro de Maquinário'}</Title>
+          <Form onSubmit={handleSubmit}>
+            <Label>Nome:</Label>
+            <Input name="nome" value={formData.nome} onChange={handleChange} required />
 
-              <Label>Data de Aquisição:</Label>
-              <Input type="date" name="aquisicao" value={formData.aquisicao} onChange={handleChange} required />
+            <Label>Data de Aquisição:</Label>
+            <Input type="date" name="aquisicao" value={formData.aquisicao} onChange={handleChange} required />
 
-              <ButtonGroup>
-                <CancelButton type="button" onClick={() => navigate('/maquinariolist')}>
-                  Voltar
-                </CancelButton>
-                <Button type="submit">{id ? 'Atualizar' : 'Salvar'}</Button>
-              </ButtonGroup>
-            </Form>
-          </PageContainer>
-        </PageWrapper>
-      </main>
+            <ButtonGroup>
+              <CancelButton type="button" onClick={() => navigate('/maquinariolist')}>
+                Voltar
+              </CancelButton>
+              <Button type="submit">{id ? 'Atualizar' : 'Salvar'}</Button>
+            </ButtonGroup>
+          </Form>
+        </PageContainer>
+      </PageWrapper>
       <Footer />
     </>
   );
