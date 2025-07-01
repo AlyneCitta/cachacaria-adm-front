@@ -73,7 +73,7 @@ const OrdemProducaoForm = () => {
   useEffect(() => {
     async function fetchProdutos() {
       try {
-        const response = await api.get('/api/products');
+        const response = await api.get('/api/products/Produzidos');
         setProdutos(response.data);
       } catch (error) {
         console.error('Erro ao carregar produtos:', error);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import GlobalStyle from "../../globalStyle/style.js";
 import api from '../../api/api'; // Ajuste o caminho se necessário
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -32,9 +33,9 @@ const ProdutoList = () => {
   const navigate = useNavigate();
 
   const [filters, setFilters] = useState({
+    codigo: '',
     descricao: '',
-    categoria: '',
-    sabor: '',
+    categoria: '',    
   });
 
   const [itens, setItens] = useState([]);
@@ -63,12 +64,13 @@ const ProdutoList = () => {
   // Aplica filtros dinamicamente
   //
   const filteredItens = itens.filter((item) =>
+    item.codigo.toLowerCase().includes(filters.codigo.toLowerCase()) &&
     item.descricao.toLowerCase().includes(filters.descricao.toLowerCase()) &&
-    item.categoria.toLowerCase().includes(filters.categoria.toLowerCase()) &&
-    item.sabor.toLowerCase().includes(filters.sabor.toLowerCase())
+    item.categoria.toLowerCase().includes(filters.categoria.toLowerCase()) 
+    
   );
 
-  const handleEdit = (produtoId) => {    
+  const handleEdit = (produtoId) => {
     navigate(`/bebidas/edit/${produtoId}`);
   };
 
@@ -122,96 +124,98 @@ const ProdutoList = () => {
 
   return (
     <>
+      <GlobalStyle />
       <Header />
-      <BreadcrumbWrapper>
-        <Breadcrumb>
-          <span onClick={goToHome}>Principal</span> &gt; <span onClick={goToProdutos}>Bebidas</span>
-        </Breadcrumb>
-      </BreadcrumbWrapper>
+      <main>
+        <BreadcrumbWrapper>
+          <Breadcrumb>
+            <span onClick={goToHome}>Principal</span> &gt; <span onClick={goToProdutos}>Bebidas</span>
+          </Breadcrumb>
+        </BreadcrumbWrapper>
 
-      <PageWrapper>
-        <PageContainer>
-          <Title>Itens</Title>
+        <PageWrapper>
+          <PageContainer>
+            <Title>Itens</Title>
 
-          <TopActions>
-            <BackButton onClick={handleBack}>Voltar</BackButton>
-            <NewButton onClick={handleNew}>Novo Item</NewButton>
-          </TopActions>
+            <TopActions>
+              <BackButton onClick={handleBack}>Voltar</BackButton>
+              <NewButton onClick={handleNew}>Novo Item</NewButton>
+            </TopActions>
 
-          <ContentWrapper>
-            <TableWrapper>
-              <Table>
-                <Thead>
-                  <Tr>
-                    <Th>Código</Th>
-                    <Th>Descrição</Th>
-                    <Th>Categoria</Th>
-                    <Th>Sabor</Th>
-                    <Th>Preço</Th>
-                    <Th>Capacida ML</Th>
-                    <Th>Custo</Th>
-                    <Th>Estoque Mínimo</Th>
-                    <Th>Código EAN</Th>
-                    <Th>Código de Barras</Th>
-                    <Th>Data Cadastro</Th>
-                    <Th>Data Alteração</Th>
-                    <Th>Unidade</Th>
-                    <Th>Ativo</Th>
-                    <Th>Tem Composição</Th>
-                    <Th>Ações</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {filteredItens.map((item) => (
-                    <Tr key={item.id_produto}>
-                      <Td>{item.codigo}</Td>
-                      <Td>{item.descricao}</Td>
-                      <Td>{item.categoria}</Td>
-                      <Td>{item.sabor}</Td>
-                      <Td>{item.preco}</Td>
-                      <Td>{item.capacidade_ml}</Td>
-                      <Td>{item.custo}</Td>
-                      <Td>{item.estoqueminimo}</Td>
-                      <Td>{item.codigoean}</Td>
-                      <Td>{item.codigobarras}</Td>
-                      <Td>{formatDate(item.dtacadastro)}</Td>
-                      <Td>{formatDate(item.dtaalteracao)}</Td>
-                      <Td>{item.unidade}</Td>
-                      <Td>{item.ativo}</Td>
-                      <Td>{item.temcomposicao}</Td>
-                      <Td>
-                        <Actions>
-                          <EditButton onClick={() => handleEdit(item.id_produto)}>Editar</EditButton>
-                          <DeleteButton onClick={() => handleDelete(item.id_produto, item.codigo)}>Excluir</DeleteButton>
-                        </Actions>
-                      </Td>
+            <ContentWrapper>
+              <TableWrapper>
+                <Table>
+                  <Thead>
+                    <Tr>
+                      <Th>Código</Th>
+                      <Th>Descrição</Th>
+                      <Th>Categoria</Th>
+                      <Th>Sabor</Th>
+                      <Th>Preço</Th>
+                      <Th>Capacida ML</Th>
+                      <Th>Custo</Th>
+                      <Th>Estoque Mínimo</Th>
+                      <Th>Código EAN</Th>
+                      <Th>Código de Barras</Th>
+                      <Th>Data Cadastro</Th>
+                      <Th>Data Alteração</Th>
+                      <Th>Unidade</Th>
+                      <Th>Ativo</Th>
+                      <Th>Tem Composição</Th>
+                      <Th>Ações</Th>
                     </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableWrapper>
-            <FilterContainer>
-              <FilterTitle>Filtros</FilterTitle>
-              <FilterInput
-                placeholder="Descrição"
-                value={filters.descricao}
-                onChange={(e) => setFilters({ ...filters, descricao: e.target.value })}
-              />
-              <FilterInput
-                placeholder="Categoria"
-                value={filters.categoria}
-                onChange={(e) => setFilters({ ...filters, categoria: e.target.value })}
-              />
-              <FilterInput
-                placeholder="Sabor"
-                value={filters.sabor}
-                onChange={(e) => setFilters({ ...filters, sabor: e.target.value })}
-              />
-            </FilterContainer>
-          </ContentWrapper>
-        </PageContainer>
-      </PageWrapper>
-
+                  </Thead>
+                  <Tbody>
+                    {filteredItens.map((item) => (
+                      <Tr key={item.id_produto}>
+                        <Td>{item.codigo}</Td>
+                        <Td>{item.descricao}</Td>
+                        <Td>{item.categoria}</Td>
+                        <Td>{item.sabor}</Td>
+                        <Td>{item.preco}</Td>
+                        <Td>{item.capacidade_ml}</Td>
+                        <Td>{item.custo}</Td>
+                        <Td>{item.estoqueminimo}</Td>
+                        <Td>{item.codigoean}</Td>
+                        <Td>{item.codigobarras}</Td>
+                        <Td>{formatDate(item.dtacadastro)}</Td>
+                        <Td>{formatDate(item.dtaalteracao)}</Td>
+                        <Td>{item.unidade}</Td>
+                        <Td>{item.ativo}</Td>
+                        <Td>{item.temcomposicao}</Td>
+                        <Td>
+                          <Actions>
+                            <EditButton onClick={() => handleEdit(item.id_produto)}>Editar</EditButton>
+                            <DeleteButton onClick={() => handleDelete(item.id_produto, item.codigo)}>Excluir</DeleteButton>
+                          </Actions>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableWrapper>
+              <FilterContainer>
+                <FilterTitle>Filtros</FilterTitle>
+                <FilterInput
+                  placeholder="Código"
+                  value={filters.codigo}
+                  onChange={(e) => setFilters({ ...filters, codigo: e.target.value })}
+                />
+                <FilterInput
+                  placeholder="Descrição"
+                  value={filters.descricao}
+                  onChange={(e) => setFilters({ ...filters, descricao: e.target.value })}
+                />
+                <FilterInput
+                  placeholder="Categoria"
+                  value={filters.categoria}
+                  onChange={(e) => setFilters({ ...filters, categoria: e.target.value })}
+                />                
+              </FilterContainer>
+            </ContentWrapper>
+          </PageContainer>
+        </PageWrapper>
+      </main>
       <Footer />
     </>
   );
