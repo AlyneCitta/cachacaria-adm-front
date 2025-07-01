@@ -84,9 +84,9 @@ const Header = () => {
 
   const menuItems = [
     { label: 'Home', href: '/home' },
-    { label: 'Sabores', href: '/sabores' },
+    { label: 'Bebidas', href: '/bebidas' },
     { label: 'Estoque', href: '/estoque' },
-    { label: 'Compras', href: '/compra' },
+    { label: 'Compras', href: '/compras' },
     { label: 'Vendas', href: '/vendas' },
     { label: 'Clientes', href: '/clientesList' },
     { label: 'Fornecedores', href: '/fornecedoreslist' },

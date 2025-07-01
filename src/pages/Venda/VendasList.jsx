@@ -47,22 +47,23 @@ const VendasList = () => {
 
   const [vendas, setVendas] = useState([]);
 
-  useEffect(() => {
-    async function fetchVendas() {
-      try {
-        const response = await api.get('/api/compravenda/venda');
-        if (response.data.message === 'EmptyList') {
-          setVendas([]);
-        } else {
-          setVendas(response.data);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar vendas:', error);
+  async function fetchVendas() {
+    try {
+      const response = await api.get('/api/compravenda/venda');
+      if (response.data.message === 'EmptyList') {
+        setVendas([]);
+      } else {
+        setVendas(response.data);
       }
+    } catch (error) {
+      console.error('Erro ao carregar vendas:', error);
     }
+  }
 
+  useEffect(() => {
     fetchVendas();
   }, []);
+
 
   const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -92,6 +93,22 @@ const VendasList = () => {
 
   const handleEdit = (id) => {
     navigate(`/vendas/view/${id}`);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Tem certeza que deseja excluir esta venda?")) return;
+
+    try {
+      await api.delete(`/api/compravenda/venda/${id}`);
+      alert("Venda excluída com sucesso!");
+
+      // recarregar a lista de vendas, se existir      
+      fetchVendas();
+
+    } catch (err) {
+      console.error("Erro ao excluir a venda:", err);
+      alert("Erro ao excluir a venda.");
+    }
   };
 
   return (
@@ -146,6 +163,7 @@ const VendasList = () => {
                         <Td>
                           <Actions>
                             <EditButton onClick={() => handleEdit(v.id)}>Visualizar</EditButton>
+                            <DeleteButton onClick={() => handleDelete(v.id)}>Excluir</DeleteButton>
                           </Actions>
                         </Td>
                       </Tr>

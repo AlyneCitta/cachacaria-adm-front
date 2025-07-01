@@ -68,7 +68,7 @@ const ProdutoForm = () => {
         const response = await api.get(`/api/composicao/${id}`);
         const composicaoFormatada = response.data.map((comp) => ({
           id: comp.id || Date.now(),
-          item: comp.idf_produtocomposicao || '',  // ✅ CORRETO AGORA
+          item: comp.idf_produtocomposicao || '',  
           quantidade: comp.qtdcomp || '',
           unidade: comp.idf_unidade || ''
         }));

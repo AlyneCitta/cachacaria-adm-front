@@ -64,8 +64,7 @@ const EstoqueList = () => {
   const filteredEstoque = estoque.filter((item) =>
     item.codigo.toLowerCase().includes(filters.codigo.toLowerCase()) &&
     item.descricao.toLowerCase().includes(filters.descricao.toLowerCase()) &&
-    item.categoria.toLowerCase().includes(filters.categoria.toLowerCase()) &&
-    item.sabor.toLowerCase().includes(filters.sabor.toLowerCase()) &&
+    item.categoria.toLowerCase().includes(filters.categoria.toLowerCase()) &&    
     item.unidade.toLowerCase().includes(filters.unidade.toLowerCase())
   );
 
@@ -104,13 +103,10 @@ const EstoqueList = () => {
                       <Th>Preço</Th>
                       <Th>Capacidade (ml)</Th>
                       <Th>Custo</Th>
-                      <Th>Estoque Mínimo</Th>
-                      <Th>Código EAN</Th>
-                      <Th>Código Barras</Th>
+                      <Th>Estoque Mínimo</Th>                      
                       <Th>Data Cadastro</Th>
                       <Th>Data Alteração</Th>
                       <Th>Categoria</Th>
-                      <Th>Sabor</Th>
                       <Th>Unidade</Th>
                       <Th>Ações</Th>
                     </Tr>
@@ -125,13 +121,10 @@ const EstoqueList = () => {
                         <Td>{formatCurrency(item.preco)}</Td>
                         <Td>{item.capacidade_ml}</Td>
                         <Td>{formatCurrency(item.custo)}</Td>
-                        <Td>{item.estoqueminimo}</Td>
-                        <Td>{item.codigoean}</Td>
-                        <Td>{item.codigobarras}</Td>
+                        <Td>{item.estoqueminimo}</Td>                        
                         <Td>{formatDate(item.dtacadastro)}</Td>
                         <Td>{formatDate(item.dtaalteracao)}</Td>
-                        <Td>{item.categoria}</Td>
-                        <Td>{item.sabor}</Td>
+                        <Td>{item.categoria}</Td>                        
                         <Td>{item.unidade}</Td>
                         <Td>
                           <Actions>

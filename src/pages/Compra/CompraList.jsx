@@ -18,6 +18,7 @@ import {
   Td,
   Actions,
   EditButton,
+  DeleteButton,
   BackButton,
   NewButton,
   TopActions,
@@ -45,20 +46,20 @@ const ComprasList = () => {
 
   const [compras, setCompras] = useState([]);
 
-  useEffect(() => {
-    async function fetchCompras() {
-      try {
-        const response = await api.get('/api/compravenda/compra');
-        if (response.data.message === 'EmptyList') {
-          setCompras([]);
-        } else {
-          setCompras(response.data);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar compras:', error);
+  async function fetchCompras() {
+    try {
+      const response = await api.get('/api/compravenda/compra');
+      if (response.data.message === 'EmptyList') {
+        setCompras([]);
+      } else {
+        setCompras(response.data);
       }
+    } catch (error) {
+      console.error('Erro ao carregar compras:', error);
     }
+  }
 
+  useEffect(() => {
     fetchCompras();
   }, []);
 
@@ -89,6 +90,22 @@ const ComprasList = () => {
 
   const handleEdit = (id) => {
     navigate(`/compras/view/${id}`);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Tem certeza que deseja excluir esta compra?")) return;
+
+    try {
+      await api.delete(`/api/compravenda/compra/${id}`);
+      alert("Compra excluída com sucesso!");
+
+      // recarregar a lista de compras
+      fetchCompras();
+
+    } catch (err) {
+      console.error("Erro ao excluir a compra:", err);
+      alert("Erro ao excluir a compra.");
+    }
   };
 
   return (
@@ -143,6 +160,7 @@ const ComprasList = () => {
                         <Td>
                           <Actions>
                             <EditButton onClick={() => handleEdit(c.id)}>Visualizar</EditButton>
+                            <DeleteButton onClick={() => handleDelete(c.id)}>Excluir</DeleteButton>
                           </Actions>
                         </Td>
                       </Tr>

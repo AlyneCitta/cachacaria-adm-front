@@ -38,6 +38,27 @@ const VendasForm = () => {
   const [unidades, setUnidades] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const somaValorTotal = itens.reduce((acc, item) => {
+    const valor = parseFloat(item.valorTotal) || 0;
+    return acc + valor;
+  }, 0).toFixed(2);
+
+  useEffect(() => {
+    setVenda((prev) => ({
+      ...prev,
+      valorLiquido: somaValorTotal,
+    }));
+  }, [somaValorTotal]);
+
+  useEffect(() => {
+    const frete = parseFloat(venda.frete) || 0;
+    const bruto = (parseFloat(somaValorTotal) + frete).toFixed(2);
+    setVenda((prev) => ({
+      ...prev,
+      valorBruto: bruto,
+    }));
+  }, [somaValorTotal, venda.frete]);
+
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -70,7 +91,7 @@ const VendasForm = () => {
           setLoading(false);
         })
         .catch((err) => {
-          console.error('Erro ao carregar venda:', err);
+          console.error('Erro ao carregar compra:', err);
           alert('Não foi possível carregar os dados.');
           setLoading(false);
         });
@@ -101,7 +122,7 @@ const VendasForm = () => {
   }, []);
 
   useEffect(() => {
-    api.get('/api/products/produto/preco')
+    api.get('/api/products/ingredientes')
       .then(response => {
         setProdutos(response.data);
       })
@@ -195,7 +216,7 @@ const VendasForm = () => {
           return {
             qtdmov: parseInt(item.quantidade) || 0,
             valorunitario: parseFloat(item.valorUnitario) || 0,
-            idf_produto: produtoObj?.id || null,
+            idf_produto: produtoObj?.id_produto || null,
             idf_lote: 1,
             idf_unidade: unidadeObj?.id || null
           };
@@ -211,8 +232,8 @@ const VendasForm = () => {
       alert('Documento salvo com sucesso!');
       navigate('/compras');
     } catch (error) {
-      console.error('Erro ao salvar venda:', error);
-      alert('Erro ao salvar o documento de venda.');
+      console.error('Erro ao salvar compra:', error);
+      alert('Erro ao salvar o documento de compra.');
     }
   };
 
@@ -295,37 +316,8 @@ const VendasForm = () => {
                             valorBruto: prev.valorBruto ? parseFloat(prev.valorBruto).toFixed(2) : '0.00',
                           }));
                         }}
-                        disabled={isViewMode}
-                      />
-                    </div>
-                  </FormRow>
-
-                  <FormRow>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Líquido</label>
-                      <Input
-                        name="valorLiquido"
-                        value={venda.valorLiquido}
-                        onChange={(e) => {
-                          const numericValue = onlyNumbersAndComma(e.target.value);
-                          setVenda((prev) => ({ ...prev, valorLiquido: numericValue }));
-                        }}
-                        onBlur={() => {
-                          setVenda((prev) => ({
-                            ...prev,
-                            valorLiquido: prev.valorLiquido ? parseFloat(prev.valorLiquido).toFixed(2) : '0.00',
-                          }));
-                        }}
-                        disabled={isViewMode}
-                      />
-                    </div>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: 4, fontSize: 14 }}>Protocolo de Autorização</label>
-                      <Input
-                        name="protocolo"
-                        value={venda.protocolo}
-                        onChange={handleChange}
-                        disabled={isViewMode}
+                        disabled={true}
+                        readOnly={true}
                       />
                     </div>
                   </FormRow>
@@ -346,6 +338,37 @@ const VendasForm = () => {
                             frete: prev.frete ? parseFloat(prev.frete).toFixed(2) : '0.00',
                           }));
                         }}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Líquido</label>
+                      <Input
+                        name="valorLiquido"
+                        value={venda.valorLiquido}
+                        onChange={(e) => {
+                          const numericValue = onlyNumbersAndComma(e.target.value);
+                          setVenda((prev) => ({ ...prev, valorLiquido: numericValue }));
+                        }}
+                        onBlur={() => {
+                          setVenda((prev) => ({
+                            ...prev,
+                            valorLiquido: prev.valorLiquido ? parseFloat(prev.valorLiquido).toFixed(2) : '0.00',
+                          }));
+                        }}
+                        disabled={true}
+                        readOnly={true}
+                      />
+                    </div>
+                  </FormRow>
+
+                  <FormRow>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Protocolo de Autorização</label>
+                      <Input
+                        name="protocolo"
+                        value={venda.protocolo}
+                        onChange={handleChange}
                         disabled={isViewMode}
                       />
                     </div>
@@ -381,35 +404,38 @@ const VendasForm = () => {
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <label style={{ marginBottom: 4, fontSize: 14 }}>Produto</label>
                     <select
-                      value={item.produto}
+                      value={item.idf_produto || ''} // você precisará armazenar o ID agora
                       onChange={(e) => {
-                        const produtoSelecionado = e.target.value;
-                        const produtoObj = produtos.find(p => p.descricao === produtoSelecionado);
-                        handleItemChange(item.id, 'produto', produtoSelecionado);
-                        handleItemChange(item.id, 'valorUnitario', produtoObj ? produtoObj.preco.toString() : '');
-                        if (produtoObj && item.quantidade) {
-                          const total = (parseFloat(item.quantidade) * produtoObj.preco).toFixed(2);
-                          handleItemChange(item.id, 'valorTotal', total);
+                        const produtoId = parseInt(e.target.value, 10);
+                        const produtoObj = produtos.find(p => p.id_produto === produtoId);
+
+                        if (produtoObj) {
+                          handleItemChange(item.id, 'idf_produto', produtoId); // armazenar o ID
+                          handleItemChange(item.id, 'produto', produtoObj.descricao); // se quiser manter nome
+                          handleItemChange(item.id, 'valorUnitario', produtoObj.preco.toString());
+
+                          if (item.quantidade) {
+                            const total = (parseFloat(item.quantidade) * produtoObj.preco).toFixed(2);
+                            handleItemChange(item.id, 'valorTotal', total);
+                          }
                         }
                       }}
                       disabled={isViewMode}
-                      style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
+                      style={{
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid #ccc',
+                        fontSize: '14px'
+                      }}
                     >
                       <option value="">Selecione um produto</option>
-
-                      {/* ✅ Garante exibição correta mesmo que o produto não esteja na lista */}
-                      {(!produtos.some(p => p.descricao === item.produto) && item.produto) && (
-                        <option value={item.produto}>{item.produto}</option>
-                      )}
-
                       {produtos.map(p => (
-                        <option key={p.id} value={p.descricao}>
+                        <option key={p.id_produto} value={p.id_produto}>
                           {p.descricao}
                         </option>
                       ))}
                     </select>
                   </div>
-
 
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <label style={{ marginBottom: 4, fontSize: 14 }}>Quantidade</label>

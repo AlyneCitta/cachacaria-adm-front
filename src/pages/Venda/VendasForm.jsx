@@ -38,6 +38,29 @@ const VendasForm = () => {
   const [unidades, setUnidades] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const somaValorTotal = itens.reduce((acc, item) => {
+    const valor = parseFloat(item.valorTotal) || 0;
+    return acc + valor;
+  }, 0).toFixed(2);
+
+  useEffect(() => {
+    setVenda((prev) => ({
+      ...prev,
+      valorLiquido: somaValorTotal,
+    }));
+  }, [somaValorTotal]);
+
+  useEffect(() => {
+    const frete = parseFloat(venda.frete) || 0;
+    const bruto = (parseFloat(somaValorTotal) + frete).toFixed(2);
+    setVenda((prev) => ({
+      ...prev,
+      valorBruto: bruto,
+    }));
+  }, [somaValorTotal, venda.frete]);
+
+
+
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -199,7 +222,7 @@ const VendasForm = () => {
             qtdmov: parseInt(item.quantidade) || 0,
             valorunitario: parseFloat(item.valorUnitario) || 0,
             idf_produto: produtoObj?.id || null,
-            idf_lote: 1,  // Exemplo: você pode mudar aqui caso precise pegar o lote real
+            idf_lote: 1,
             idf_unidade: unidadeObj?.id || null
           };
         })
@@ -298,37 +321,8 @@ const VendasForm = () => {
                             valorBruto: prev.valorBruto ? parseFloat(prev.valorBruto).toFixed(2) : '0.00',
                           }));
                         }}
-                        disabled={isViewMode}
-                      />
-                    </div>
-                  </FormRow>
-
-                  <FormRow>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Líquido</label>
-                      <Input
-                        name="valorLiquido"
-                        value={venda.valorLiquido}
-                        onChange={(e) => {
-                          const numericValue = onlyNumbersAndComma(e.target.value);
-                          setVenda((prev) => ({ ...prev, valorLiquido: numericValue }));
-                        }}
-                        onBlur={() => {
-                          setVenda((prev) => ({
-                            ...prev,
-                            valorLiquido: prev.valorLiquido ? parseFloat(prev.valorLiquido).toFixed(2) : '0.00',
-                          }));
-                        }}
-                        disabled={isViewMode}
-                      />
-                    </div>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: 4, fontSize: 14 }}>Protocolo de Autorização</label>
-                      <Input
-                        name="protocolo"
-                        value={venda.protocolo}
-                        onChange={handleChange}
-                        disabled={isViewMode}
+                        disabled={true}
+                        readOnly={true}
                       />
                     </div>
                   </FormRow>
@@ -349,6 +343,37 @@ const VendasForm = () => {
                             frete: prev.frete ? parseFloat(prev.frete).toFixed(2) : '0.00',
                           }));
                         }}
+                        disabled={isViewMode}
+                      />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Valor Líquido</label>
+                      <Input
+                        name="valorLiquido"
+                        value={venda.valorLiquido}
+                        onChange={(e) => {
+                          const numericValue = onlyNumbersAndComma(e.target.value);
+                          setVenda((prev) => ({ ...prev, valorLiquido: numericValue }));
+                        }}
+                        onBlur={() => {
+                          setVenda((prev) => ({
+                            ...prev,
+                            valorLiquido: prev.valorLiquido ? parseFloat(prev.valorLiquido).toFixed(2) : '0.00',
+                          }));
+                        }}
+                        disabled={true}
+                        readOnly={true}
+                      />
+                    </div>
+                  </FormRow>
+
+                  <FormRow>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Protocolo de Autorização</label>
+                      <Input
+                        name="protocolo"
+                        value={venda.protocolo}
+                        onChange={handleChange}
                         disabled={isViewMode}
                       />
                     </div>
@@ -415,10 +440,7 @@ const VendasForm = () => {
                         </option>
                       ))}
                     </select>
-
                   </div>
-
-
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <label style={{ marginBottom: 4, fontSize: 14 }}>Quantidade</label>
                     <CompositionInput

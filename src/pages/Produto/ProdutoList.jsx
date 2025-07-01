@@ -33,9 +33,9 @@ const ProdutoList = () => {
   const navigate = useNavigate();
 
   const [filters, setFilters] = useState({
+    codigo: '',
     descricao: '',
-    categoria: '',
-    sabor: '',
+    categoria: '',    
   });
 
   const [itens, setItens] = useState([]);
@@ -64,9 +64,10 @@ const ProdutoList = () => {
   // Aplica filtros dinamicamente
   //
   const filteredItens = itens.filter((item) =>
+    item.codigo.toLowerCase().includes(filters.codigo.toLowerCase()) &&
     item.descricao.toLowerCase().includes(filters.descricao.toLowerCase()) &&
-    item.categoria.toLowerCase().includes(filters.categoria.toLowerCase()) &&
-    item.sabor.toLowerCase().includes(filters.sabor.toLowerCase())
+    item.categoria.toLowerCase().includes(filters.categoria.toLowerCase()) 
+    
   );
 
   const handleEdit = (produtoId) => {
@@ -196,6 +197,11 @@ const ProdutoList = () => {
               <FilterContainer>
                 <FilterTitle>Filtros</FilterTitle>
                 <FilterInput
+                  placeholder="Código"
+                  value={filters.codigo}
+                  onChange={(e) => setFilters({ ...filters, codigo: e.target.value })}
+                />
+                <FilterInput
                   placeholder="Descrição"
                   value={filters.descricao}
                   onChange={(e) => setFilters({ ...filters, descricao: e.target.value })}
@@ -204,12 +210,7 @@ const ProdutoList = () => {
                   placeholder="Categoria"
                   value={filters.categoria}
                   onChange={(e) => setFilters({ ...filters, categoria: e.target.value })}
-                />
-                <FilterInput
-                  placeholder="Sabor"
-                  value={filters.sabor}
-                  onChange={(e) => setFilters({ ...filters, sabor: e.target.value })}
-                />
+                />                
               </FilterContainer>
             </ContentWrapper>
           </PageContainer>
