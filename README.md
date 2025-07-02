@@ -1,4 +1,4 @@
-# 🥃 Cachaçaria ADM - Front-End
+# 🥃 Cachaçaria ADM - FrontEnd
 
 Este repositório contém o código-fonte do **painel administrativo da Cachaçaria**, desenvolvido em **React + Vite**, com foco na gestão de clientes, fornecedores, estoque, produção, vendas, entre outros recursos.
 
