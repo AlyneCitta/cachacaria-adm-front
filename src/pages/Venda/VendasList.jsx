@@ -141,7 +141,7 @@ const VendasList = () => {
                       <Th>Protocolo Autorização</Th>
                       <Th>Chave NFe</Th>
                       <Th>Data Emissão</Th>
-                      <Th>Data Entrada</Th>
+                      <Th>Data Saída</Th>
                       <Th>Valor Bruto</Th>
                       <Th>Valor Líquido</Th>
                       <Th>Valor Frete</Th>
