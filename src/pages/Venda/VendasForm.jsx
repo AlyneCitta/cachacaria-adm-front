@@ -378,7 +378,7 @@ const VendasForm = () => {
                       />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <label style={{ marginBottom: 4, fontSize: 14 }}>Data Entrada</label>
+                      <label style={{ marginBottom: 4, fontSize: 14 }}>Data Saída</label>
                       <Input
                         name="dataEntrada"
                         type="date"
