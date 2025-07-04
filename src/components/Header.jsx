@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import logo from '../assets/logo.png';
 import profileIcon from '../assets/profileIcon.png';
@@ -76,6 +76,18 @@ const LoginButton = styled.button`
 `;
 
 const Header = () => {
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('Sessão expirada ou não autenticado. Faça login novamente.');
+      logout();
+      navigate('/login');
+    }
+  }, []);
+
+
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef();
   const navigate = useNavigate();
@@ -85,16 +97,14 @@ const Header = () => {
   const menuItems = [
     { label: 'Home', href: '/home' },
     { label: 'Bebidas', href: '/bebidas' },
-    { label: 'Estoque', href: '/estoque' },
+    { label: 'Ingredientes', href: '/ingredientes' },
     { label: 'Compras', href: '/compras' },
     { label: 'Vendas', href: '/vendas' },
+    { label: 'Estoque', href: '/estoque' },
+    { label: 'Produção', href: '/producao' },
     { label: 'Clientes', href: '/clientesList' },
     { label: 'Fornecedores', href: '/fornecedoreslist' },
-    { label: 'Ingredientes', href: '/ingredientes' },
-    { label: 'Utensílios', href: '/utensilios' },
-    { label: 'Bebidas', href: '/bebidas' },
     { label: 'Maquinário', href: '/maquinariolist' },
-    { label: 'Relatórios', href: '/relatorio' },
   ];
 
   return (

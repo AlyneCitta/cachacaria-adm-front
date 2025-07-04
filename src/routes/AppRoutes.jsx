@@ -24,6 +24,7 @@ import ConsultaEstoqueProduto from "../pages/Estoque/ConsultaEstoqueProduto";
 import Relatorio from '../pages/Relatorio/Relatorio';
 import Utensilios from '../pages/Utensilios/Utensilios';
 import Ingredientes from '../pages/Ingredientes/Ingredientes';
+import IngredientesForm from "../pages/Ingredientes/IngredientesForm";
 
 const AppRoutes = () => {
   return (
@@ -61,7 +62,9 @@ const AppRoutes = () => {
         <Route path="/estoque/view/:IdProduct" element={<ConsultaEstoqueProduto />} />        
         <Route path="/utensilios" element={<Utensilios />} />
         <Route path="/relatorio" element={<Relatorio />} />
-        <Route path="/ingredientes" element={<Ingredientes />} />
+        <Route path="/ingredientes" element={<Ingredientes />} />        
+        <Route path="/ingredientes/edit/:id" element={<IngredientesForm />} />
+        <Route path="/ingredientes/new" element={<IngredientesForm />} />
       </Routes>
     </AuthProvider>
   );

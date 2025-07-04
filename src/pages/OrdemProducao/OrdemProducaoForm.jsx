@@ -338,7 +338,9 @@ const OrdemProducaoForm = () => {
               <FormRow>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <label style={{ marginBottom: '4px', fontSize: '14px' }}>Número Documento</label>
-                  <Input name="documento" value={ordem.documento} onChange={handleChange} disabled={isViewMode} readOnly={isViewMode} />
+                  <Input name="documento" value={ordem.documento} onChange={handleChange}
+                  disabled={true}
+                  readOnly={true}/>
                 </div>
 
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>

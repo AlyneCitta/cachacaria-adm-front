@@ -21,16 +21,14 @@ import relatorioIcon from '../../assets/relatorioIcon.png';
 // Itens com rotas associadas
 const items = [
   { label: 'Bebidas', icon: bebidasIcon, route: '/bebidas' },
-  { label: 'Estoque', icon: estoqueIcon, route: '/estoque' },
+  { label: 'Ingredientes', icon: ingredientesIcon, route: '/ingredientes' },
   { label: 'Compras', icon: comprasIcon, route: '/compras' },
   { label: 'Vendas', icon: vendasIcon, route: '/vendas' },
+  { label: 'Estoque', icon: estoqueIcon, route: '/estoque' },
   { label: 'Produção', icon: saboresIcon, route: '/producao' },
   { label: 'Clientes', icon: clientesIcon, route: '/clienteslist' },
-  { label: 'Fornecedores', icon: fornecedoresIcon, route: '/fornecedoreslist' },
-  { label: 'Ingredientes', icon: ingredientesIcon, route: '/ingredientes' },
-  { label: 'Utensílios', icon: utensiliosIcon, route: '/utensilios' },
-  { label: 'Maquinário', icon: maquinarioIcon, route: '/maquinariolist' },
-  { label: 'Relatórios', icon: relatorioIcon, route: '/relatorio' },
+  { label: 'Fornecedores', icon: fornecedoresIcon, route: '/fornecedoreslist' },  
+  { label: 'Maquinário', icon: maquinarioIcon, route: '/maquinariolist' },  
 ];
 
 const Home = () => {

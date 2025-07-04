@@ -221,8 +221,8 @@ const VendasForm = () => {
           return {
             qtdmov: parseInt(item.quantidade) || 0,
             valorunitario: parseFloat(item.valorUnitario) || 0,
-            idf_produto: produtoObj?.id || null,
-            idf_lote: 1,
+            idf_produto: produtoObj?.id || null,            
+            idf_lote: parseInt(item.idf_lote) || null,
             idf_unidade: unidadeObj?.id || null
           };
         })
@@ -409,15 +409,16 @@ const VendasForm = () => {
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <label style={{ marginBottom: 4, fontSize: 14 }}>Produto</label>
                     <select
-                      value={item.idf_produto || ''} // você precisará armazenar o ID agora
+                      value={item.idf_produto || ''} 
                       onChange={(e) => {
                         const produtoId = parseInt(e.target.value, 10);
                         const produtoObj = produtos.find(p => p.id === produtoId);
 
                         if (produtoObj) {
-                          handleItemChange(item.id, 'idf_produto', produtoId); // armazenar o ID
-                          handleItemChange(item.id, 'produto', produtoObj.descricao); // se quiser manter nome
+                          handleItemChange(item.id, 'idf_produto', produtoId); 
+                          handleItemChange(item.id, 'produto', produtoObj.descricao); 
                           handleItemChange(item.id, 'valorUnitario', produtoObj.preco.toString());
+                          handleItemChange(item.id, 'idf_lote', produtoObj.idf_lote || produtoObj.loteId || 1); 
 
                           if (item.quantidade) {
                             const total = (parseFloat(item.quantidade) * produtoObj.preco).toFixed(2);

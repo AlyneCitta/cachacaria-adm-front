@@ -46,7 +46,7 @@ const ProdutoList = () => {
   useEffect(() => {
     async function fetchProdutos() {
       try {
-        const response = await api.get('/api/products');
+        const response = await api.get('/api/products/produzidos');
         if (response.data.message === 'EmptyList') {
           setItens([]);
         } else {
@@ -135,7 +135,7 @@ const ProdutoList = () => {
 
         <PageWrapper>
           <PageContainer>
-            <Title>Itens</Title>
+            <Title>Bebidas</Title>
 
             <TopActions>
               <BackButton onClick={handleBack}>Voltar</BackButton>

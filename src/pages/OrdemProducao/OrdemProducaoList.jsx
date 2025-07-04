@@ -21,22 +21,35 @@ const OrdemProducaoList = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchOrdens() {
-      try {
-        const response = await api.get('/api/producao/ordemproducao');
-        setOrdens(response.data);
-      } catch (error) {
-        console.error('Erro ao carregar ordens de produção:', error);
-      }
+  async function fetchOrdens() {
+    try {
+      const response = await api.get('/api/producao/ordemproducao');
+      setOrdens(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar ordens de produção:', error);
     }
+  }
 
+  useEffect(() => {
     fetchOrdens();
   }, []);
 
 
   const handleView = (produtoId) => {
     navigate(`/producao/view/${produtoId}`);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Tem certeza que deseja excluir esta ordem de produção?")) return;
+
+    try {
+      await api.delete(`/api/producao/${id}`);
+      alert("Ordem excluída com sucesso!");
+      fetchOrdens(); // Atualiza a lista
+    } catch (err) {
+      console.error("Erro ao excluir ordem:", err);
+      alert("Erro ao excluir ordem de produção.");
+    }
   };
 
   const filteredOrdens = ordens.filter(o =>
@@ -92,6 +105,7 @@ const OrdemProducaoList = () => {
                         <Td>
                           <Actions>
                             <EditButton onClick={() => handleView(o.id)}>Visualizar</EditButton>
+                            <DeleteButton onClick={() => handleDelete(o.id)}>Excluir</DeleteButton>
                           </Actions>
                         </Td>
                       </Tr>

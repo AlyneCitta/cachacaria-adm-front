@@ -91,7 +91,7 @@ const ConsultaEstoqueProduto = () => {
                       <Th>Data Movimento</Th>
                       <Th>Origem Movimento</Th>
                       <Th>Número Documento</Th>
-                      <Th>Código</Th>
+                      <Th>Código Lote</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -128,7 +128,7 @@ const ConsultaEstoqueProduto = () => {
                         <Td>{formatDate(lote.dtaproducao)}</Td>
                         <Td>{formatDate(lote.dtavalidade)}</Td>
                         <Td>{lote.qtdproduzido}</Td>
-                        <Td>{lote.saldo}</Td>
+                        <Td>{lote.saldo || 0}</Td>
                       </Tr>
                     ))}
                   </Tbody>

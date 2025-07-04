@@ -79,7 +79,7 @@ const FornecedoresForm = () => {
 
   // Carregar dados do fornecedor se id existir
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');    
 
     const carregarFornecedor = async () => {
       try {
